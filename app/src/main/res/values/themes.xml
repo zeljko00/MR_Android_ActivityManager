@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.MR_ActivityManager" parent="Theme.MaterialComponents.Light.DarkActionBar">
+    <style name="Theme.MR_ActivityManager" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryVariant">@color/variant</item>
@@ -44,8 +44,41 @@
         <item name="android:background">@color/surface</item>
         <item name="android:elevation">6dp</item>
     </style>
+    <style name="VerticalLine" parent="@style/Theme.AppCompat">
+        <item  name="android:layout_width">4dp</item>
+        <item name="android:background">@color/background</item>
+        <item name="android:elevation">6dp</item>
+    </style>
     <style name="SpinnerItem" parent="Widget.AppCompat.DropDownItem.Spinner">
         <item name="android:textColor">@color/secondary</item>
         <item name="android:textSize">14sp</item>
+    </style>
+    <style name="ListItemDateSmall" parent="@style/Theme.AppCompat">
+        <item name="android:textColor">@color/primary</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+    <style name="ListItemDateBig" parent="@style/Theme.AppCompat">
+        <item name="android:textColor">@color/primary</item>
+        <item name="android:textSize">30sp</item>
+        <item name="android:gravity">center_vertical|center_horizontal</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="ListItemTitle" parent="@style/Theme.AppCompat">
+        <item name="android:textColor">@color/onSurface</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+    <style name="ListItemType" parent="@style/Theme.AppCompat">
+        <item name="android:textColor">@color/secondary</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+    <style name="ActivityCard" parent="@style/Widget.MaterialComponents.CardView">
+        <item name="cardCornerRadius">15dp</item>
+        <item name="cardBackgroundColor">@color/surface</item>
+        <item name="cardElevation">10dp</item>
     </style>
 </resources>

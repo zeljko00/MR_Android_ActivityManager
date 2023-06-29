@@ -16,26 +16,53 @@
     <string name="srb_value">sr</string>
     <string name="p1d">1 dan</string>
     <string name="p1d_value">1d</string>
-    <string name="p2d">2 dana</string>
-    <string name="p2d_value">2d</string>
-    <string name="p5d">5 dana</string>
-    <string name="p5d_value">5d</string>
     <string name="p1w">1 sedmica</string>
     <string name="p1w_value">1w</string>
-    <string name="p2w">2 sedmice</string>
-    <string name="p2w_value">2w</string>
-    <string name="p1m">1 mjesec</string>
-    <string name="p1m_value">1m</string>
+    <string name="p1h">1 sat</string>
+    <string name="p1h_value">1h</string>
+
+    <string name="mon">PON</string>
+    <string name="tue">UTO</string>
+    <string name="wed">SRI</string>
+    <string name="thu">ČET</string>
+    <string name="fri">PET</string>
+    <string name="sat">SUB</string>
+    <string name="sun">NED</string>
+
+    <string name="jan">JAN</string>
+    <string name="feb">FEB</string>
+    <string name="mar">MAR</string>
+    <string name="apr">APR</string>
+    <string name="may">MAJ</string>
+    <string name="jun">JUN</string>
+    <string name="jul">JUL</string>
+    <string name="avg">AVG</string>
+    <string name="sep">SEP</string>
+    <string name="oct">OKT</string>
+    <string name="nov">NOV</string>
+    <string name="dec">DEC</string>
+
+    <string name="work">posao</string>
+    <string name="travel">putovanje</string>
+    <string name="freetime">slobodno vrijeme</string>
+
+    <string name="work_val">work</string>
+    <string name="travel_val">travel</string>
+    <string name="freetime_val">relaxation</string>
+
+    <string name="search">Pretraga</string>
     <string-array name="period_values">
         <item>1 dan</item>
-        <item>2 dana</item>
-        <item>5 dana</item>
         <item>1 sedmica</item>
-        <item>2 sedmice</item>
-        <item>1 mjesec</item>
+        <item>1 sat</item>
     </string-array>
     <string-array name="lngs">
         <item>Srpski</item>
         <item>Engleski</item>
+    </string-array>
+    <string-array name="types">
+        <item>posao</item>
+        <item>putovanje</item>
+        <item>slobodno vrijeme</item>
     </string-array>
 </resources>

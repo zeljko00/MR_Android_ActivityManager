@@ -6,4 +6,8 @@
     <dimen name="settings_option_height">30dp</dimen>
     <dimen name="settings_value_width">80dp</dimen>
     <dimen name="settings_value_height">30dp</dimen>
+    <dimen name="medium_margin">4dp</dimen>
+    <dimen name="large_margin">6dp</dimen>
+    <dimen name="xlarge_margin">8dp</dimen>
+    <dimen name="date_field_width">60dp</dimen>
 </resources>

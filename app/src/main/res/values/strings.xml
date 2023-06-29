@@ -16,26 +16,54 @@
     <string name="srb_value">sr</string>
     <string name="p1d">1 day</string>
     <string name="p1d_value">1d</string>
-    <string name="p2d">2 days</string>
-    <string name="p2d_value">2d</string>
-    <string name="p5d">5 days</string>
-    <string name="p5d_value">5d</string>
     <string name="p1w">1 week</string>
     <string name="p1w_value">1w</string>
-    <string name="p2w">2 weeks</string>
-    <string name="p2w_value">2w</string>
-    <string name="p1m">1 month</string>
-    <string name="p1m_value">1m</string>
+    <string name="p1h">1 sat</string>
+    <string name="p1h_value">1h</string>
+    <string name="mon">MON</string>
+    <string name="tue">TUE</string>
+    <string name="wed">WED</string>
+    <string name="thu">THU</string>
+    <string name="fri">FRI</string>
+    <string name="sat">SAT</string>
+    <string name="sun">SUN</string>
+
+    <string name="jan">JAN</string>
+    <string name="feb">FEB</string>
+    <string name="mar">MAR</string>
+    <string name="apr">APR</string>
+    <string name="may">MAY</string>
+    <string name="jun">JUN</string>
+    <string name="jul">JUL</string>
+    <string name="avg">AVG</string>
+    <string name="sep">SEP</string>
+    <string name="oct">OCT</string>
+    <string name="nov">NOV</string>
+    <string name="dec">DEC</string>
+
+    <string name="work">work</string>
+    <string name="travel">travel</string>
+    <string name="freetime">relaxation</string>
+
+    <string name="work_val">work</string>
+    <string name="travel_val">travel</string>
+    <string name="freetime_val">relaxation</string>
+
+    <string name="search">Search</string>
+
     <string-array name="period_values">
         <item>1 day</item>
-        <item>2 days</item>
-        <item>5 days</item>
         <item>1 week</item>
-        <item>2 weeks</item>
-        <item>1 month</item>
+        <item>1 hour</item>
     </string-array>
     <string-array name="lngs">
         <item>Serbian</item>
         <item>English</item>
+    </string-array>
+
+    <string-array name="types">
+        <item>work</item>
+        <item>travel</item>
+        <item>relaxation</item>
     </string-array>
 </resources>

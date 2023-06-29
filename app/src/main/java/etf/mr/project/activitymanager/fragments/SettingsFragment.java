@@ -112,16 +112,10 @@ public class SettingsFragment extends Fragment{
             String periodLabel;
             if(period.equals(getActivity().getResources().getString(R.string.p1d_value)))
                 periodLabel=getActivity().getResources().getString(R.string.p1d);
-            else if(period.equals(getActivity().getResources().getString(R.string.p2d_value)))
-                periodLabel=getActivity().getResources().getString(R.string.p2d);
-            else if(period.equals(getActivity().getResources().getString(R.string.p5d_value)))
-                periodLabel=getActivity().getResources().getString(R.string.p5d);
             else if(period.equals(getActivity().getResources().getString(R.string.p1w_value)))
                 periodLabel=getActivity().getResources().getString(R.string.p1w);
-            else if(period.equals(getActivity().getResources().getString(R.string.p2w_value)))
-                periodLabel=getActivity().getResources().getString(R.string.p2w);
             else
-                periodLabel=getActivity().getResources().getString(R.string.p1m);
+                periodLabel=getActivity().getResources().getString(R.string.p1h);
             boolean enabled=sharedPreferences.getBoolean(NOTIFICATIONS_ENABLED,true);
             changeSelectedLng(langLabel);
             changeSelectedPeriod(periodLabel);
@@ -166,16 +160,10 @@ public class SettingsFragment extends Fragment{
         String periodValue;
         if(period.equals(getActivity().getResources().getString(R.string.p1d)))
             periodValue=getActivity().getResources().getString(R.string.p1d_value);
-        else if(period.equals(getActivity().getResources().getString(R.string.p2d)))
-            periodValue=getActivity().getResources().getString(R.string.p2d_value);
-        else if(period.equals(getActivity().getResources().getString(R.string.p5d)))
-            periodValue=getActivity().getResources().getString(R.string.p5d_value);
         else if(period.equals(getActivity().getResources().getString(R.string.p1w)))
             periodValue=getActivity().getResources().getString(R.string.p1w_value);
-        else if(period.equals(getActivity().getResources().getString(R.string.p2w)))
-            periodValue=getActivity().getResources().getString(R.string.p2w_value);
         else
-            periodValue=getActivity().getResources().getString(R.string.p1m_value);
+            periodValue=getActivity().getResources().getString(R.string.p1h_value);
         Log.d("period","selected value="+period);
         Log.d("period","value to save="+periodValue);
         editor.putString(NOTIFICATIONS_PERIOD, periodValue);
