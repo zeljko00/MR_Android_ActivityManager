@@ -1,0 +1,51 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.MR_ActivityManager" parent="Theme.MaterialComponents.Light.DarkActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryVariant">@color/variant</item>
+        <item name="colorOnPrimary">@color/onPrimary</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/secondary</item>
+        <item name="colorSecondaryVariant">@color/secondary</item>
+        <item name="colorOnSecondary">@color/onSecondary</item>
+        <item name="android:statusBarColor">@color/error</item>
+        <item name="android:actionBarTheme">@style/CustomActionBarStyle</item>
+    </style>
+    <style name="CustomActionBarStyle" parent="ThemeOverlay.MaterialComponents.ActionBar">
+        <!-- Customize the ActionBar attributes -->
+        <item name="android:background">@color/primary</item>
+        <!-- Other ActionBar attributes -->
+    </style>
+    <style name="BottomNavigationViewStyle" parent="Widget.MaterialComponents.BottomNavigationView.Colored">
+        <item name="itemIconTint">@color/onSurface</item>
+        <item name="itemTextColor">@color/onSurface</item>
+        <item name="android:background">@color/surface</item>
+    </style>
+    <style name="FragmentStyle" parent="@style/Theme.AppCompat">
+        <item name="android:background">@color/background</item>
+    </style>
+    <style name="SettingsHeader" parent="@style/Theme.AppCompat">
+        <item name="android:textColor">@color/secondary</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+    <style name="SettingsOption" parent="@style/Theme.AppCompat">
+        <item name="android:textColor">@color/onSurface</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+    <style name="SettingsValue" parent="@style/Theme.AppCompat">
+        <item name="android:textColor">@color/secondary</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+    <style name="HorizontalLine" parent="@style/Theme.AppCompat">
+        <item  name="android:layout_height">2dp</item>
+        <item name="android:background">@color/surface</item>
+        <item name="android:elevation">6dp</item>
+    </style>
+    <style name="SpinnerItem" parent="Widget.AppCompat.DropDownItem.Spinner">
+        <item name="android:textColor">@color/secondary</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+</resources>
