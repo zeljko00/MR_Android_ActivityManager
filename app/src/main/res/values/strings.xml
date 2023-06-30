@@ -50,7 +50,9 @@
     <string name="freetime_val">relaxation</string>
 
     <string name="search">Search</string>
-
+    <string name="sure">Delete activity?</string>
+    <string name="delete">DELETE</string>
+    <string name="cancel">CANCEL</string>
     <string-array name="period_values">
         <item>1 day</item>
         <item>1 week</item>

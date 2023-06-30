@@ -8,14 +8,14 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 
-import etf.mr.project.activitymanager.PeriodChangeListenerInterface;
+import etf.mr.project.activitymanager.interfaces.PeriodChangeListenerInterface;
 import etf.mr.project.activitymanager.R;
 
 public class PeriodDialog extends DialogFragment {
-    private PeriodChangeListenerInterface periodChangeListenerInterface;
+    private PeriodChangeListenerInterface handler;
 
-    public void setPeriodChangeListenerInterface(PeriodChangeListenerInterface periodChangeListenerInterface) {
-        this.periodChangeListenerInterface = periodChangeListenerInterface;
+    public void setPeriodChangeListenerInterface(PeriodChangeListenerInterface handler) {
+        this.handler = handler;
     }
     @NonNull
     @Override
@@ -26,8 +26,8 @@ public class PeriodDialog extends DialogFragment {
                 .setItems(items, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         String selectedItem = items[which];
-                        if(periodChangeListenerInterface!=null)
-                            periodChangeListenerInterface.change(selectedItem);
+                        if(handler!=null)
+                            handler.change(selectedItem);
                     }
                 });
         return builder.create();

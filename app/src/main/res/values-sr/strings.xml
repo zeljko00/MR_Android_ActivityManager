@@ -51,6 +51,9 @@
     <string name="freetime_val">relaxation</string>
 
     <string name="search">Pretraga</string>
+    <string name="sure">Obriši aktivnost?</string>
+    <string name="delete">OBRIŠI</string>
+    <string name="cancel">IZLAZ</string>
     <string-array name="period_values">
         <item>1 dan</item>
         <item>1 sedmica</item>

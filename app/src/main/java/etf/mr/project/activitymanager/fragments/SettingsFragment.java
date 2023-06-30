@@ -1,6 +1,5 @@
 package etf.mr.project.activitymanager.fragments;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -18,8 +17,8 @@ import android.widget.TextView;
 
 import java.util.Locale;
 
-import etf.mr.project.activitymanager.LngChangeListenerInterface;
-import etf.mr.project.activitymanager.PeriodChangeListenerInterface;
+import etf.mr.project.activitymanager.interfaces.LngChangeListenerInterface;
+import etf.mr.project.activitymanager.interfaces.PeriodChangeListenerInterface;
 import etf.mr.project.activitymanager.R;
 import etf.mr.project.activitymanager.dialogs.LanguageDialog;
 import etf.mr.project.activitymanager.dialogs.PeriodDialog;
