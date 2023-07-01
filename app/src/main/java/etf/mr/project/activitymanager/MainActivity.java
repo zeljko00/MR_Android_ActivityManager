@@ -59,10 +59,10 @@ public class MainActivity extends AppCompatActivity {
 
 
         selectedActivityViewModel = new ViewModelProvider(this).get(SelectedActivityViewModel.class);
-        if(selectedActivityViewModel.getSharedData()!=null && selectedActivityViewModel.getSharedData().getValue()!=null)
-            Log.d("xxxx--",selectedActivityViewModel.getSharedData().getValue().toString());
-        else
-            Log.d("xxxx--","No dat presetn");
+//        if(selectedActivityViewModel.getSharedData()!=null && selectedActivityViewModel.getSharedData().getValue()!=null)
+//            Log.d("xxxx--",selectedActivityViewModel.getSharedData().getValue().toString());
+//        else
+//            Log.d("xxxx--","No dat presetn");
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
 

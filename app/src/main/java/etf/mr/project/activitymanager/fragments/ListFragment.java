@@ -108,7 +108,6 @@ public class ListFragment extends Fragment {
             item.setDesc("Opis Opis Opis Opis Opis Opis Opis Opis Opis");
             item.setAddress("Adres Adres Adres Adres Adres Adres Adres Adres");
             ActivityDTO dto = map(item);
-            Log.d("xxxx",dto.toString());
             data.add(dto);
             activityList.add(item);
         }

@@ -21,6 +21,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -41,6 +42,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.carousel.CarouselLayoutManager;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.io.File;
@@ -58,6 +60,7 @@ import java.util.Locale;
 
 import etf.mr.project.activitymanager.MainActivity;
 import etf.mr.project.activitymanager.R;
+import etf.mr.project.activitymanager.adapters.CarouselAdapter;
 import etf.mr.project.activitymanager.model.Activity;
 import etf.mr.project.activitymanager.viewmodel.SharedViewModel;
 
@@ -89,11 +92,11 @@ public class NewActivityFragment extends Fragment {
 
     private Geocoder geocoder;
     private SharedViewModel sharedViewModel;
-
-
-    private ImageView imageView;
     private String mParam1;
     private String mParam2;
+    private RecyclerView carousel;
+
+    private CarouselAdapter carouselAdapter;
 
     public NewActivityFragment() {
         // Required empty public constructor
@@ -135,6 +138,13 @@ public class NewActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_new_activity, container, false);
+
+        carousel = view.findViewById(R.id.carousel_recycler_view2);
+        carousel.setLayoutManager(new CarouselLayoutManager());
+        carousel.setHasFixedSize(true);
+        carouselAdapter = new CarouselAdapter(new ArrayList<>());
+        carousel.setAdapter(carouselAdapter);
+
         AutoCompleteTextView spinner = view.findViewById(R.id.comboBox);
         String[] types = getContext().getResources().getStringArray(R.array.types);
         ArrayAdapter<String> adapter = new ArrayAdapter(this.getContext(), android.R.layout.simple_dropdown_item_1line, types);
@@ -191,12 +201,11 @@ public class NewActivityFragment extends Fragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-                String type=s.toString();
-                if(type!=null && type.equals(getContext().getResources().getString(R.string.freetime_val))){
+                String type = s.toString();
+                if (type != null && type.equals(getContext().getResources().getString(R.string.freetime))) {
                     upload.setVisibility(View.VISIBLE);
                     take.setVisibility(View.VISIBLE);
-                }
-                else {
+                } else {
                     upload.setVisibility(View.INVISIBLE);
                     take.setVisibility(View.INVISIBLE);
                 }
@@ -215,7 +224,6 @@ public class NewActivityFragment extends Fragment {
                 l.setLayoutParams(layoutParams);
             });
         }
-        imageView = view.findViewById(R.id.image);
         return view;
     }
 
@@ -269,7 +277,7 @@ public class NewActivityFragment extends Fragment {
         activity.setDesc(desc.getText().toString());
         activity.setType(type.getText().toString());
 
-        if (sharedViewModel!=null && sharedViewModel.getSharedData()!=null && sharedViewModel.getSharedData().getValue() != null) {
+        if (sharedViewModel != null && sharedViewModel.getSharedData() != null && sharedViewModel.getSharedData().getValue() != null) {
             activity.setX(sharedViewModel.getSharedData().getValue().getLat());
             activity.setY(sharedViewModel.getSharedData().getValue().getLng());
         } else {
@@ -327,7 +335,7 @@ public class NewActivityFragment extends Fragment {
                     File imageFile = createPhotoFile();
                     saveImg(imageFile, image);
                     imgs.add(imageFile.getAbsolutePath());
-                    showPhoto(imageView, imageFile.getAbsolutePath());
+                    carouselAdapter.addImg(imageFile.getAbsolutePath());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -335,7 +343,8 @@ public class NewActivityFragment extends Fragment {
         } else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             if (path != null) {
                 imgs.add(path);
-                showPhoto(imageView, path);
+                carouselAdapter.addImg(path);
+//                showPhoto(imageView, path);
             }
         }
     }
