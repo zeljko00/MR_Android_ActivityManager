@@ -30,6 +30,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.material.button.MaterialButton;
@@ -77,7 +78,7 @@ public class NewActivityFragment extends Fragment {
     private SharedViewModel sharedViewModel;
 
 
-    // TODO: Rename and change types of parameters
+    private ImageView imageView;
     private String mParam1;
     private String mParam2;
 
@@ -159,7 +160,7 @@ public class NewActivityFragment extends Fragment {
         });
         MaterialButton take = view.findViewById(R.id.take);
         take.setOnClickListener((View v) -> {
-//            dispatchTakePictureIntent();
+            dispatchTakePictureIntent();
         });
 
         List<TextInputLayout> tils = new ArrayList<>();
@@ -175,7 +176,7 @@ public class NewActivityFragment extends Fragment {
                 l.setLayoutParams(layoutParams);
             });
         }
-
+        imageView=view.findViewById(R.id.image);
         return view;
     }
 
@@ -272,7 +273,6 @@ public class NewActivityFragment extends Fragment {
     }
 
     private void pickImage() {
-        Toast.makeText(getContext(),"picking",Toast.LENGTH_SHORT);
         Log.d("xxxx","picking");
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(intent, REQUEST_IMAGE_PICK);
@@ -280,31 +280,35 @@ public class NewActivityFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Toast.makeText(getContext(),"Hi from new",Toast.LENGTH_SHORT);
-//        Log.d("taken","request "+requestCode);
-//        Log.d("taken","result "+resultCode);
-//        super.onActivityResult(requestCode, resultCode, data);
-////        Log.d("taken",data.toString());
-//        if (requestCode == REQUEST_IMAGE_PICK && resultCode == RESULT_OK) {
-//            if (data != null && data.getData() != null) {
-//                // Get the selected image URI
-//                Uri imageUri = data.getData();
-//                Log.d("image", imageUri.toString());
-////                view.findViewById(R.id.uploaded).setVisibility(View.VISIBLE);
-//            }
-//        } else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-//            // Use the captured photo data
-//            if (takenPhoto != null) {
-//                Log.d("taken",takenPhoto.toString());
-////                Bundle extras = data.getExtras();
-////                Bitmap imageBitmap = (Bitmap) extras.get("data");
-////                Log.d("taken", imageBitmap.toString());
+        Log.d("xxxx","receiving result");
+        Log.d("xxxx","request "+requestCode);
+        Log.d("xxxx","result "+resultCode);
+        if(data!=null)
+            Log.d("xxxx","intent present");
+        else Log.d("xxxx","intent=null");
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_IMAGE_PICK && resultCode == RESULT_OK) {
+            if (data != null && data.getData() != null) {
+                Uri imageUri = data.getData();
+                Log.d("xxxx", imageUri.toString());
+            }
+        }
+        else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            // Use the captured photo data
+            if (takenPhoto != null) {
+                setPic();
+                //works if you dont send extra data in intent to camera
+//                Bundle extras = data.getExtras();
+//                Bitmap imageBitmap = (Bitmap) extras.get("data");
+//                imageView.setImageBitmap(imageBitmap);
 //            galleryAddPic();
-//            }
-//
-//            // Do something with the photo
-//            // ...
-//        }
+
+
+            }
+
+            // Do something with the photo
+            // ...
+        }
     }
 //    private void galleryAddPic() {
 //        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
@@ -313,40 +317,67 @@ public class NewActivityFragment extends Fragment {
 //        mediaScanIntent.setData(contentUri);
 //        getActivity().sendBroadcast(mediaScanIntent);
 //    }
-//    private void dispatchTakePictureIntent() {
-//        try {
-//            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//            if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-//                // Create a file to save the photo
-//                File photoFile = createPhotoFile();
-//
-//                if (photoFile != null) {
-//                    // Get the file URI
-//                takenPhoto = FileProvider.getUriForFile(getContext(),
-//                        "etf.mr.project.activitymanager", photoFile);
-//                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, takenPhoto);
-//
-//                    // Start the camera intent
-//                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-//                }
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return;
-//        }
-//    }
+    private void dispatchTakePictureIntent() {
+        try {
+            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+                // Create a file to save the photo
+                File photoFile = createPhotoFile();
 
-//    private File createPhotoFile() throws IOException {
-//        // Create an image file name
-//        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
-//        String imageFileName = "JPEG_" + timeStamp + "_";
-//        File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-//        File imageFile = File.createTempFile(
-//                imageFileName,  // prefix
-//                ".jpg",         // suffix
-//                storageDir      // directory
-//        );
-//        path=imageFile.getAbsolutePath();
-//        return imageFile;
-//    }
+                if (photoFile != null) {
+                    // Get the file URI
+                takenPhoto = FileProvider.getUriForFile(getContext(),
+                        "etf.mr.project.activitymanager", photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, takenPhoto);
+
+                    // Start the camera intent
+                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
+    }
+
+    private File createPhotoFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File imageFile = File.createTempFile(
+                imageFileName,  // prefix
+                ".jpg",         // suffix
+                storageDir      // directory
+        );
+        path=imageFile.getAbsolutePath();
+        return imageFile;
+    }
+    private void setPic() {
+        Log.d("xxxx",path);
+        // Get the dimensions of the View
+        int targetW = imageView.getWidth();
+        int targetH = imageView.getHeight();
+
+        // Get the dimensions of the bitmap
+        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+        bmOptions.inJustDecodeBounds = true;
+
+        BitmapFactory.decodeFile(path, bmOptions);
+
+        int photoW = bmOptions.outWidth;
+        int photoH = bmOptions.outHeight;
+
+        // Determine how much to scale down the image
+        int scaleFactor = Math.max(1, Math.min(photoW/targetW, photoH/targetH));
+
+        // Decode the image file into a Bitmap sized to fill the View
+        bmOptions.inJustDecodeBounds = false;
+        bmOptions.inSampleSize = scaleFactor;
+        bmOptions.inPurgeable = true;
+
+        Bitmap bitmap = BitmapFactory.decodeFile(path, bmOptions);
+        Log.d("xxxx",bitmap.toString());
+        imageView.setImageBitmap(bitmap);
+    }
 }
