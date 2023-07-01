@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    android:fillViewport="true"
+    tools:context=".fragments.NewActivityFragment">
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragments.ActivityDetailsFragment"
+    style="@style/FragmentStyle">
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/titleView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:textStyle="bold"
+        style="@style/LargeTextCustomView"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+    <View
+        android:id="@+id/hr1"
+        android:layout_width="match_parent"
+        android:layout_marginTop="@dimen/xxlarge_margin"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/titleView"
+        app:layout_constraintVertical_bias="0.0"
+        style="@style/HorizontalLine"/>
+
+    <ImageView
+        android:id="@+id/address_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/xxlarge_margin"
+        android:layout_marginTop="@dimen/xxlarge_margin"
+        app:tint="@color/primary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/hr1"
+        app:srcCompat="@drawable/ic_location" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/addressView"
+        android:textStyle="italic"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        app:layout_constraintWidth_percent="0.80"
+        style="@style/MediumTextCustomView"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@id/address_icon"
+        app:layout_constraintTop_toBottomOf="@id/hr1"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <ImageView
+        android:id="@+id/desc_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/xxlarge_margin"
+        android:layout_marginTop="@dimen/xxlarge_margin"
+        app:tint="@color/primary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/addressView"
+        app:srcCompat="@drawable/ic_desc" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/descView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        style="@style/SmallTextCustomView"
+        app:layout_constraintWidth_percent="0.80"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@id/desc_icon"
+        app:layout_constraintTop_toBottomOf="@id/addressView"
+        app:layout_constraintVertical_bias="0.0" />
+    <View
+        android:id="@+id/hr2"
+        android:layout_width="match_parent"
+        android:layout_marginTop="@dimen/xxlarge_margin"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/descView"
+        app:layout_constraintVertical_bias="0.0"
+        style="@style/HorizontalLine"/>
+
+    <ImageView
+        android:id="@+id/start_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/xxlarge_margin"
+        android:layout_marginTop="@dimen/xxlarge_margin"
+        app:tint="@color/primary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/hr2"
+        app:srcCompat="@drawable/ic_start" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/startsView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:layout_marginStart="0dp"
+        style="@style/SmallTextCustomView"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@id/start_icon"
+        app:layout_constraintTop_toBottomOf="@id/hr2"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <ImageView
+        android:id="@+id/stop_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="@dimen/xxlarge_margin"
+        app:tint="@color/primary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintStart_toEndOf="@id/startsView"
+        app:layout_constraintTop_toBottomOf="@id/hr2"
+        app:srcCompat="@drawable/ic_stop" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/endsView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="0dp"
+        android:text="TextView"
+        style="@style/SmallTextCustomView"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@id/stop_icon"
+        app:layout_constraintTop_toBottomOf="@id/hr2"
+        app:layout_constraintVertical_bias="0.0" />
+    <ImageView
+        android:id="@+id/type_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/xxlarge_margin"
+        android:layout_marginTop="@dimen/xxlarge_margin"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/startsView"
+        app:srcCompat="@drawable/ic_settings" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/typeView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:textColor="@color/secondary"
+        style="@style/MediumTextCustomView"
+        android:layout_marginTop="@dimen/xxlarge_margin"
+        android:layout_marginStart="@dimen/xxlarge_margin"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@id/type_icon"
+        app:layout_constraintTop_toBottomOf="@id/startsView"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <View
+        android:id="@+id/hr3"
+        android:layout_width="match_parent"
+        android:layout_marginTop="@dimen/xxlarge_margin"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/typeView"
+        app:layout_constraintVertical_bias="0.0"
+        style="@style/HorizontalLine"/>
+
+    <com.google.android.gms.maps.MapView
+        android:id="@+id/locationView"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/map_height"
+        android:layout_marginStart="@dimen/xxlarge_margin"
+        android:layout_marginEnd="@dimen/xxlarge_margin"
+        android:layout_marginTop="@dimen/xxlarge_margin"
+        android:layout_marginBottom="@dimen/xxlarge_margin"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/hr3"
+        app:layout_constraintVertical_bias="0.0" />
+</androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>

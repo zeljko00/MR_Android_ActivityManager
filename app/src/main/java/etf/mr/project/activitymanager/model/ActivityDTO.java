@@ -135,4 +135,24 @@ public class ActivityDTO {
     public void setImgs(List<String> imgs) {
         this.imgs = imgs;
     }
+
+    @Override
+    public String toString() {
+        return "ActivityDTO{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", desc='" + desc + '\'' +
+                ", type='" + type + '\'' +
+                ", address='" + address + '\'' +
+                ", x=" + x +
+                ", y=" + y +
+                ", starts=" + starts +
+                ", day='" + day + '\'' +
+                ", month='" + month + '\'' +
+                ", date='" + date + '\'' +
+                ", ends=" + ends +
+                ", icon=" + icon +
+                ", imgs=" + imgs +
+                '}';
+    }
 }

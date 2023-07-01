@@ -14,5 +14,6 @@
     <dimen name="input_max_width">300dp</dimen>
     <dimen name="medium_input_width">170dp</dimen>
     <dimen name="small_input_width">120dp</dimen>
+    <dimen name="map_height">250dp</dimen>
 
 </resources>

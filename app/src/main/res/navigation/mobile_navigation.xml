@@ -19,6 +19,9 @@
         <action
             android:id="@+id/action_navigation_list_to_navigation_location_picker"
             app:destination="@id/navigation_location_picker" />
+        <action
+            android:id="@+id/action_navigation_list_to_navigation_details"
+            app:destination="@id/navigation_details" />
     </fragment>
 
     <fragment
@@ -44,4 +47,9 @@
         android:id="@+id/action_navigation_location_picker_to_navigation_new_activity"
         app:destination="@id/navigation_new_activity" />
     </fragment>
+    <fragment
+        android:id="@+id/navigation_details"
+        android:name="etf.mr.project.activitymanager.fragments.ActivityDetailsFragment"
+        android:label="@string/details"
+        tools:layout="@layout/fragment_activity_details" />
 </navigation>

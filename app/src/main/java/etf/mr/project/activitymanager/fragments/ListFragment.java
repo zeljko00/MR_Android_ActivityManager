@@ -9,6 +9,7 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,14 +24,17 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
+import etf.mr.project.activitymanager.MainActivity;
 import etf.mr.project.activitymanager.R;
 import etf.mr.project.activitymanager.adapters.ActivityListAdapter;
 import etf.mr.project.activitymanager.dialogs.DeleteActivityDialog;
 import etf.mr.project.activitymanager.interfaces.DeleteActivityInterface;
 import etf.mr.project.activitymanager.model.Activity;
 import etf.mr.project.activitymanager.model.ActivityDTO;
+import etf.mr.project.activitymanager.viewmodel.SelectedActivityViewModel;
 
 public class ListFragment extends Fragment {
 
@@ -44,6 +48,7 @@ public class ListFragment extends Fragment {
     private RecyclerView.LayoutManager layoutManager;
     private List<Activity> activityList = new ArrayList<>();
     private List<ActivityDTO> data = new ArrayList<>();
+    private SelectedActivityViewModel selectedActivityViewModel;
 
     public ListFragment() {
         // Required empty public constructor
@@ -65,6 +70,7 @@ public class ListFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        selectedActivityViewModel = ((MainActivity) requireActivity()).getSelectedActivityViewModel();
     }
 
     @Override
@@ -73,8 +79,11 @@ public class ListFragment extends Fragment {
         setHasOptionsMenu(true);
         View view = inflater.inflate(R.layout.fragment_list, container, false);
 
+        Random gen=new Random();
         for (int i = 0; i < 100; i++) {
             Activity item = new Activity();
+            item.setX(gen.nextDouble()*i);
+            item.setY(gen.nextDouble()*i);
             item.setId(i);
             item.setTitle("Naslov " + (i + 1));
             if (i % 5 == 0)
@@ -96,8 +105,10 @@ public class ListFragment extends Fragment {
             calendar.add(Calendar.DATE, i % 14);
             item.setStarts(calendar.getTime());
             item.setEnds(calendar.getTime());
-
+            item.setDesc("Opis Opis Opis Opis Opis Opis Opis Opis Opis");
+            item.setAddress("Adres Adres Adres Adres Adres Adres Adres Adres");
             ActivityDTO dto = map(item);
+            Log.d("xxxx",dto.toString());
             data.add(dto);
             activityList.add(item);
         }
@@ -110,7 +121,9 @@ public class ListFragment extends Fragment {
         mAdapter = new ActivityListAdapter(data, new ActivityListAdapter.ItemClickHandler() {
             @Override
             public void handleItemClick(ActivityDTO item) {
-                Toast.makeText(getContext(), item.getTitle(), Toast.LENGTH_SHORT).show();
+                Log.d("xxxx-xxxx",item.toString());
+                selectedActivityViewModel.setSharedData(item);
+                Navigation.findNavController(view).navigate(R.id.action_navigation_list_to_navigation_details);
             }
 
         }, new ActivityListAdapter.ItemLongClickHandler() {
@@ -232,6 +245,7 @@ public class ListFragment extends Fragment {
         dto.setTitle(item.getTitle());
         dto.setId(item.getId());
         dto.setAddress(item.getAddress());
+        dto.setDesc(item.getDesc());
         dto.setX(item.getX());
         dto.setY(item.getY());
         dto.setImgs(item.getImgs());
@@ -242,6 +256,7 @@ public class ListFragment extends Fragment {
         else
             dto.setType(getContext().getResources().getString(R.string.freetime));
         dto.setStarts(item.getStarts());
+        dto.setEnds(new Date());
         dto.setDate(Integer.toString(calendar.get(Calendar.DATE)));
         dto.setMonth(month);
         dto.setDay(day);

@@ -1,0 +1,147 @@
+package etf.mr.project.activitymanager.fragments;
+
+import android.os.Bundle;
+
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.material.textview.MaterialTextView;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
+import etf.mr.project.activitymanager.MainActivity;
+import etf.mr.project.activitymanager.R;
+import etf.mr.project.activitymanager.viewmodel.SelectedActivityViewModel;
+
+public class ActivityDetailsFragment extends Fragment implements OnMapReadyCallback{
+
+    private static final String ARG_PARAM1 = "param1";
+    private static final String ARG_PARAM2 = "param2";
+
+    private String mParam1;
+    private String mParam2;
+
+    private MapView mapView;
+    private GoogleMap googleMap;
+
+    private Marker marker;
+
+    private SelectedActivityViewModel selectedActivityViewModel;
+
+    private DateFormat dateFormat;
+
+    private MaterialTextView title;
+    private MaterialTextView desc;
+    private MaterialTextView address;
+    private MaterialTextView type;
+    private MaterialTextView starts;
+    private MaterialTextView ends;
+    private ImageView icon;
+    public ActivityDetailsFragment() {
+        // Required empty public constructor
+    }
+
+    public static ActivityDetailsFragment newInstance(String param1, String param2) {
+        ActivityDetailsFragment fragment = new ActivityDetailsFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_PARAM1, param1);
+        args.putString(ARG_PARAM2, param2);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            mParam1 = getArguments().getString(ARG_PARAM1);
+            mParam2 = getArguments().getString(ARG_PARAM2);
+        }
+
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View view=inflater.inflate(R.layout.fragment_activity_details, container, false);
+        selectedActivityViewModel = new ViewModelProvider(requireActivity()).get(SelectedActivityViewModel.class);
+        mapView = view.findViewById(R.id.locationView);
+        mapView.onCreate(savedInstanceState);
+        mapView.getMapAsync(this);
+        dateFormat=new SimpleDateFormat("dd.MM.yyyy HH:mm");
+        title=view.findViewById(R.id.titleView);
+        desc=view.findViewById(R.id.descView);
+        address=view.findViewById(R.id.addressView);
+        type=view.findViewById(R.id.typeView);
+        starts=view.findViewById(R.id.startsView);
+        ends=view.findViewById(R.id.endsView);
+        icon=view.findViewById(R.id.type_icon);
+        if(selectedActivityViewModel!=null && selectedActivityViewModel.getSharedData()!=null && selectedActivityViewModel.getSharedData().getValue()!=null){
+        title.setText(selectedActivityViewModel.getSharedData().getValue().getTitle());
+        desc.setText(selectedActivityViewModel.getSharedData().getValue().getDesc());
+        address.setText(selectedActivityViewModel.getSharedData().getValue().getAddress());
+        type.setText(selectedActivityViewModel.getSharedData().getValue().getType());
+        starts.setText(dateFormat.format(selectedActivityViewModel.getSharedData().getValue().getStarts()).replace(" "," "+getContext().getResources().getString(R.string.at)+" "));
+        ends.setText(dateFormat.format(selectedActivityViewModel.getSharedData().getValue().getEnds()).replace(" "," "+getContext().getResources().getString(R.string.at)+" "));
+        icon.setImageDrawable(selectedActivityViewModel.getSharedData().getValue().getIcon());
+        Log.d("xxxx",selectedActivityViewModel.getSharedData().getValue().toString());}
+        return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mapView != null)
+
+            mapView.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (mapView != null) mapView.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mapView != null) mapView.onDestroy();
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        if (mapView != null) mapView.onLowMemory();
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        this.googleMap = googleMap;
+
+        // Add a marker at a specific location
+//        LatLng markerPosition = new LatLng(44.766769914889494, 17.18670582069851);
+        if(selectedActivityViewModel!=null && selectedActivityViewModel.getSharedData()!=null && selectedActivityViewModel.getSharedData().getValue()!=null){
+        LatLng markerPosition = new LatLng(selectedActivityViewModel.getSharedData().getValue().getX(), selectedActivityViewModel.getSharedData().getValue().getY());
+        marker = googleMap.addMarker(new MarkerOptions().position(markerPosition).draggable(true));
+
+        // Set the camera position to the marker
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(markerPosition, 12));}
+
+    }
+
+}

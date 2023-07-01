@@ -24,6 +24,8 @@ import androidx.navigation.Navigation;
 
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
@@ -78,12 +80,10 @@ public class NewActivityFragment extends Fragment {
     private EditText startTime;
     private EditText endTime;
 
-
-    private Uri takenPhoto;
     private Activity activity;
     private String path;
 
-    private List<String> imgs=new ArrayList<>();
+    private List<String> imgs = new ArrayList<>();
     private double lat = 44.766769914889494;
     private double lng = 17.18670582069851;
 
@@ -158,6 +158,7 @@ public class NewActivityFragment extends Fragment {
         title = view.findViewById(R.id.title_input_field);
         desc = view.findViewById(R.id.desc_input_field);
         type = view.findViewById(R.id.comboBox);
+
         MaterialButton submit = view.findViewById(R.id.submit);
         submit.setOnClickListener((View v) -> {
             if (!checkInputData())
@@ -176,6 +177,31 @@ public class NewActivityFragment extends Fragment {
             dispatchTakePictureIntent();
         });
 
+
+        type.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // This method is called before the text is changed.
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // This method is called when the text is being changed.
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String type=s.toString();
+                if(type!=null && type.equals(getContext().getResources().getString(R.string.freetime_val))){
+                    upload.setVisibility(View.VISIBLE);
+                    take.setVisibility(View.VISIBLE);
+                }
+                else {
+                    upload.setVisibility(View.INVISIBLE);
+                    take.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
         List<TextInputLayout> tils = new ArrayList<>();
         tils.add(view.findViewById(R.id.title_input));
         tils.add(view.findViewById(R.id.desc_input));
@@ -243,7 +269,7 @@ public class NewActivityFragment extends Fragment {
         activity.setDesc(desc.getText().toString());
         activity.setType(type.getText().toString());
 
-        if (sharedViewModel.getSharedData().getValue() != null) {
+        if (sharedViewModel!=null && sharedViewModel.getSharedData()!=null && sharedViewModel.getSharedData().getValue() != null) {
             activity.setX(sharedViewModel.getSharedData().getValue().getLat());
             activity.setY(sharedViewModel.getSharedData().getValue().getLng());
         } else {
@@ -275,7 +301,7 @@ public class NewActivityFragment extends Fragment {
         } catch (Exception e) {
             activity.setEnds(new Date());
         }
-        Log.d("location", sharedViewModel.getSharedData().getValue().getLat() + " " + sharedViewModel.getSharedData().getValue().getLng());
+//        Log.d("location", sharedViewModel.getSharedData().getValue().getLat() + " " + sharedViewModel.getSharedData().getValue().getLng());
         return activity;
     }
 
@@ -286,52 +312,34 @@ public class NewActivityFragment extends Fragment {
     }
 
     private void pickImage() {
-//        requestPermissions();
-        Log.d("xxxx", "picking");
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(intent, REQUEST_IMAGE_PICK);
-
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        Log.d("xxxx", "receiving result");
-//        Log.d("xxxx", "request " + requestCode);
-//        Log.d("xxxx", "result " + resultCode);
-//        if (data != null)
-//            Log.d("xxxx", "intent present");
-//        else Log.d("xxxx", "intent=null");
-
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_IMAGE_PICK && resultCode == RESULT_OK) {
             if (data != null && data.getData() != null) {
                 Uri imageUri = data.getData();
-                Bitmap image=getBitmapFromUri(imageUri);
-                try{
-                File imageFile=createPhotoFile();
-                saveImg(imageFile,image);
-                setPic(imageFile.getAbsolutePath());
-                Log.d("xxxx","path="+imageFile.getAbsolutePath());}catch(Exception e){
+                try {
+                    Bitmap image = getBitmapFromUri(imageUri);
+                    File imageFile = createPhotoFile();
+                    saveImg(imageFile, image);
+                    imgs.add(imageFile.getAbsolutePath());
+                    showPhoto(imageView, imageFile.getAbsolutePath());
+                } catch (Exception e) {
                     e.printStackTrace();
-                    return;
                 }
             }
         } else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            // Use the captured photo data
             if (path != null) {
                 imgs.add(path);
-                setPic(path);
+                showPhoto(imageView, path);
             }
         }
     }
 
-    //    private void galleryAddPic() {
-//        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-//        File f = new File(path);
-//        Uri contentUri = Uri.fromFile(f);
-//        mediaScanIntent.setData(contentUri);
-//        getActivity().sendBroadcast(mediaScanIntent);
-//    }
     private void dispatchTakePictureIntent() {
         try {
             Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -341,7 +349,7 @@ public class NewActivityFragment extends Fragment {
 
                 if (photoFile != null) {
                     // Get the file URI
-                    takenPhoto = FileProvider.getUriForFile(getContext(),
+                    Uri takenPhoto = FileProvider.getUriForFile(getContext(),
                             "etf.mr.project.activitymanager", photoFile);
                     takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, takenPhoto);
                     // Start the camera intent
@@ -350,12 +358,10 @@ public class NewActivityFragment extends Fragment {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return;
         }
     }
 
     private File createPhotoFile() throws IOException {
-        // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
@@ -368,7 +374,7 @@ public class NewActivityFragment extends Fragment {
         return imageFile;
     }
 
-    private void setPic(String path) {
+    private void showPhoto(ImageView imageView, String path) {
         // Get the dimensions of the View
         int targetW = imageView.getWidth();
         int targetH = imageView.getHeight();
@@ -396,30 +402,26 @@ public class NewActivityFragment extends Fragment {
 
     public Bitmap getBitmapFromUri(Uri uri) {
         try {
-            // Use the content resolver to open an input stream from the Uri
             InputStream inputStream = getContext().getContentResolver().openInputStream(uri);
-
-            // Decode the input stream into a Bitmap
             Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-
-            // Close the input stream
             inputStream.close();
-
             return bitmap;
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return null;
     }
-    private void saveImg(File file, Bitmap img){
+
+    // saving image in app storage
+    private boolean saveImg(File file, Bitmap img) {
         OutputStream outputStream = null;
         try {
             outputStream = new FileOutputStream(file);
-            img.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+            img.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
             outputStream.flush();
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
         } finally {
             try {
                 if (outputStream != null) {
@@ -429,7 +431,11 @@ public class NewActivityFragment extends Fragment {
                 e.printStackTrace();
             }
         }
+        return true;
     }
+}
+
+
 //    public String getAbsolutePathFromUri(Uri uri) {
 //        String[] projection = {MediaStore.Images.Media.DATA};
 //        Cursor cursor = getContext().getContentResolver().query(uri, projection, null, null, null);
@@ -460,4 +466,3 @@ public class NewActivityFragment extends Fragment {
 //            }
 //        }
 //    }
-}

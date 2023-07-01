@@ -66,6 +66,7 @@
     <string name="next">NEXT</string>
     <string name="upload">Upload images</string>
     <string name="take">Take photo</string>
+    <string name="details">Activity details</string>
     <string-array name="period_values">
         <item>1 day</item>
         <item>1 week</item>
@@ -81,5 +82,4 @@
         <item>travel</item>
         <item>relaxation</item>
     </string-array>
-    <!-- TODO: Remove or change this placeholder text -->
 </resources>
