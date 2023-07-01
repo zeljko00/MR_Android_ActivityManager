@@ -5,10 +5,10 @@ import android.os.Bundle;
 
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -95,90 +95,10 @@ public class ListFragment extends Fragment {
             calendar.setTime(new Date());
             calendar.add(Calendar.DATE, i % 14);
             item.setStarts(calendar.getTime());
-            String day = "MON";
-            String month = "DEC";
-            int iDay = calendar.get(Calendar.DAY_OF_WEEK);
-            int iMonth = calendar.get(Calendar.MONTH);
-            switch (iDay) {
-                case 1:
-                    day = getContext().getResources().getString(R.string.sun);
-                    break;
-                case 2:
-                    day = getContext().getResources().getString(R.string.mon);
-                    break;
-                case 3:
-                    day = getContext().getResources().getString(R.string.tue);
-                    break;
-                case 4:
-                    day = getContext().getResources().getString(R.string.wed);
-                    break;
-                case 5:
-                    day = getContext().getResources().getString(R.string.thu);
-                    break;
-                case 6:
-                    day = getContext().getResources().getString(R.string.fri);
-                    break;
-                default:
-                    day = getContext().getResources().getString(R.string.sat);
-            }
-            switch (iMonth) {
-                case 0:
-                    month = getContext().getResources().getString(R.string.jan);
-                    break;
-                case 1:
-                    month = getContext().getResources().getString(R.string.feb);
-                    break;
-                case 2:
-                    month = getContext().getResources().getString(R.string.mar);
-                    break;
-                case 3:
-                    month = getContext().getResources().getString(R.string.apr);
-                    break;
-                case 4:
-                    month = getContext().getResources().getString(R.string.may);
-                    break;
-                case 5:
-                    month = getContext().getResources().getString(R.string.jun);
-                    break;
-                case 6:
-                    month = getContext().getResources().getString(R.string.jul);
-                    break;
-                case 7:
-                    month = getContext().getResources().getString(R.string.avg);
-                    break;
-                case 8:
-                    month = getContext().getResources().getString(R.string.sep);
-                    break;
-                case 9:
-                    month = getContext().getResources().getString(R.string.oct);
-                    break;
-                case 10:
-                    month = getContext().getResources().getString(R.string.nov);
-                    break;
-                default:
-                    month = getContext().getResources().getString(R.string.dec);
-            }
-            ActivityDTO dto = new ActivityDTO();
-            dto.setTitle(item.getTitle());
-            dto.setId(i);
-            if (item.getType().equals(getContext().getResources().getString(R.string.work_val)))
-                dto.setType(getContext().getResources().getString(R.string.work));
-            else if (item.getType().equals(getContext().getResources().getString(R.string.travel_val)))
-                dto.setType(getContext().getResources().getString(R.string.travel));
-            else
-                dto.setType(getContext().getResources().getString(R.string.freetime));
-            dto.setStarts(item.getStarts());
-            dto.setDate(Integer.toString(calendar.get(Calendar.DATE)));
-            dto.setMonth(month);
-            dto.setDay(day);
+            item.setEnds(calendar.getTime());
+
+            ActivityDTO dto = map(item);
             data.add(dto);
-            if (dto.getType().equals(getContext().getResources().getString(R.string.work_val)))
-                dto.setIcon(getContext().getDrawable(R.drawable.ic_work));
-            else if (dto.getType().equals(getContext().getResources().getString(R.string.travel_val)))
-                dto.setIcon(getContext().getDrawable(R.drawable.ic_trip));
-            else
-                dto.setIcon(getContext().getDrawable(R.drawable.ic_freetime));
-            dto.getIcon().setColorFilter(getContext().getColor(R.color.primary), PorterDuff.Mode.SRC_IN);
             activityList.add(item);
         }
         recyclerView = view.findViewById(R.id.recycler);
@@ -214,7 +134,7 @@ public class ListFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getContext(), "Adding", Toast.LENGTH_SHORT).show();
+                Navigation.findNavController(v).navigate(R.id.action_navigation_list_to_navigation_location_picker);
             }
         });
         return view;
@@ -241,5 +161,96 @@ public class ListFragment extends Fragment {
                 return true;
             }
         });
+    }
+    private  ActivityDTO map(Activity item){
+        ActivityDTO dto = new ActivityDTO();
+        String day = "MON";
+        String month = "DEC";
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(item.getStarts());
+        int iDay = calendar.get(Calendar.DAY_OF_WEEK);
+        int iMonth = calendar.get(Calendar.MONTH);
+        switch (iDay) {
+            case 1:
+                day = getContext().getResources().getString(R.string.sun);
+                break;
+            case 2:
+                day = getContext().getResources().getString(R.string.mon);
+                break;
+            case 3:
+                day = getContext().getResources().getString(R.string.tue);
+                break;
+            case 4:
+                day = getContext().getResources().getString(R.string.wed);
+                break;
+            case 5:
+                day = getContext().getResources().getString(R.string.thu);
+                break;
+            case 6:
+                day = getContext().getResources().getString(R.string.fri);
+                break;
+            default:
+                day = getContext().getResources().getString(R.string.sat);
+        }
+        switch (iMonth) {
+            case 0:
+                month = getContext().getResources().getString(R.string.jan);
+                break;
+            case 1:
+                month = getContext().getResources().getString(R.string.feb);
+                break;
+            case 2:
+                month = getContext().getResources().getString(R.string.mar);
+                break;
+            case 3:
+                month = getContext().getResources().getString(R.string.apr);
+                break;
+            case 4:
+                month = getContext().getResources().getString(R.string.may);
+                break;
+            case 5:
+                month = getContext().getResources().getString(R.string.jun);
+                break;
+            case 6:
+                month = getContext().getResources().getString(R.string.jul);
+                break;
+            case 7:
+                month = getContext().getResources().getString(R.string.avg);
+                break;
+            case 8:
+                month = getContext().getResources().getString(R.string.sep);
+                break;
+            case 9:
+                month = getContext().getResources().getString(R.string.oct);
+                break;
+            case 10:
+                month = getContext().getResources().getString(R.string.nov);
+                break;
+            default:
+                month = getContext().getResources().getString(R.string.dec);
+        }
+        dto.setTitle(item.getTitle());
+        dto.setId(item.getId());
+        dto.setAddress(item.getAddress());
+        dto.setX(item.getX());
+        dto.setY(item.getY());
+        if (item.getType().equals(getContext().getResources().getString(R.string.work_val)))
+            dto.setType(getContext().getResources().getString(R.string.work));
+        else if (item.getType().equals(getContext().getResources().getString(R.string.travel_val)))
+            dto.setType(getContext().getResources().getString(R.string.travel));
+        else
+            dto.setType(getContext().getResources().getString(R.string.freetime));
+        dto.setStarts(item.getStarts());
+        dto.setDate(Integer.toString(calendar.get(Calendar.DATE)));
+        dto.setMonth(month);
+        dto.setDay(day);
+        if (dto.getType().equals(getContext().getResources().getString(R.string.work_val)))
+            dto.setIcon(getContext().getDrawable(R.drawable.ic_work));
+        else if (dto.getType().equals(getContext().getResources().getString(R.string.travel_val)))
+            dto.setIcon(getContext().getDrawable(R.drawable.ic_trip));
+        else
+            dto.setIcon(getContext().getDrawable(R.drawable.ic_freetime));
+        dto.getIcon().setColorFilter(getContext().getColor(R.color.primary), PorterDuff.Mode.SRC_IN);
+        return dto;
     }
 }

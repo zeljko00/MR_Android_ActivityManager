@@ -62,24 +62,6 @@ public class SettingsFragment extends Fragment{
                              Bundle savedInstanceState) {
         rootView=inflater.inflate(R.layout.fragment_settings, container, false);
 
-//        // adding options to period selector
-//        Spinner spinner = rootView.findViewById(R.id.period_select);
-//        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this.requireContext(), R.array.period_values, R.layout.spinner_item);
-//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
-//        spinner.setAdapter(adapter);
-//        // period select action conf
-//        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//            @Override
-//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//                String selectedItem = parent.getItemAtPosition(position).toString();
-//            }
-//
-//            @Override
-//            public void onNothingSelected(AdapterView<?> parent) {
-//                // Handle the case when no item is selected
-//            }
-//        });
-
         TextView lngLbl = rootView.findViewById(R.id.lng_lbl);
         lngLbl.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -182,7 +164,7 @@ public class SettingsFragment extends Fragment{
                 saveSelectedLng(lng);
             }
         });
-        dialogFragment.show(getChildFragmentManager(), "MyLanguageDialog");
+        dialogFragment.show(getChildFragmentManager(), "LanguageDialog");
     }
     private void showPeriodDialog() {
         PeriodDialog dialogFragment = new PeriodDialog();
@@ -193,7 +175,7 @@ public class SettingsFragment extends Fragment{
                 saveSelectedPeriod(period);
             }
         });
-        dialogFragment.show(getChildFragmentManager(), "MyPeriodDialog");
+        dialogFragment.show(getChildFragmentManager(), "PeriodDialog");
     }
 
 }

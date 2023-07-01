@@ -27,12 +27,14 @@ public class LanguageDialog extends DialogFragment {
         final String[] items = requireContext().getResources().getStringArray(R.array.lngs);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(getResources().getString(R.string.lng_select))
-                .setItems(items, new DialogInterface.OnClickListener() {
+                .setSingleChoiceItems(items,-1, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         String selectedItem = items[which];
                         selectedLng = selectedItem;
+                        dialog.dismiss();
                     }
                 });
+
         return builder.create();
     }
 

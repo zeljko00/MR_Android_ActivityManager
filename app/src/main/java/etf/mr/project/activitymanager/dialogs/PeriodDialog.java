@@ -23,11 +23,12 @@ public class PeriodDialog extends DialogFragment {
         final String[] items =requireContext().getResources().getStringArray(R.array.period_values);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(getResources().getString(R.string.period_select))
-                .setItems(items, new DialogInterface.OnClickListener() {
+                .setSingleChoiceItems(items,-1, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         String selectedItem = items[which];
                         if(handler!=null)
                             handler.change(selectedItem);
+                        dialog.dismiss();
                     }
                 });
         return builder.create();

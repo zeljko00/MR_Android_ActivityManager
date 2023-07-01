@@ -9,5 +9,10 @@
     <dimen name="medium_margin">4dp</dimen>
     <dimen name="large_margin">6dp</dimen>
     <dimen name="xlarge_margin">8dp</dimen>
+    <dimen name="xxlarge_margin">15dp</dimen>
     <dimen name="date_field_width">60dp</dimen>
+    <dimen name="input_max_width">300dp</dimen>
+    <dimen name="medium_input_width">170dp</dimen>
+    <dimen name="small_input_width">120dp</dimen>
+
 </resources>

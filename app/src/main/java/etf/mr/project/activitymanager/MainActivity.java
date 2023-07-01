@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -17,6 +18,7 @@ import android.widget.Toast;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -30,10 +32,12 @@ import java.util.Locale;
 
 import etf.mr.project.activitymanager.databinding.ActivityMainBinding;
 import etf.mr.project.activitymanager.model.Activity;
+import etf.mr.project.activitymanager.viewmodel.SharedViewModel;
 
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
+    private SharedViewModel sharedViewModel;
     private static final String SELECTED_LANGUAGE = "Locale.Helper.Selected.Language";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,11 +52,12 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        sharedViewModel = new ViewModelProvider(this).get(SharedViewModel.class);
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
 
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_calendar, R.id.navigation_list, R.id.navigation_settings)
+                R.id.navigation_calendar, R.id.navigation_list, R.id.navigation_settings,R.id.navigation_new_activity,R.id.navigation_location_picker)
                 .build();
 
         // fragment navigation setup
@@ -60,8 +65,15 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
 
+    }
 
+    public SharedViewModel getSharedViewModel() {
+        return sharedViewModel;
+    }
 
-
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Toast.makeText(this,"Hi from Main",Toast.LENGTH_SHORT);
     }
 }

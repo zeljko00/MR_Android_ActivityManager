@@ -54,6 +54,20 @@
     <string name="sure">Obriši aktivnost?</string>
     <string name="delete">OBRIŠI</string>
     <string name="cancel">IZLAZ</string>
+    <string name="new_activity">Nova aktivnost</string>
+
+    <string name="title">Naslov</string>
+    <string name="desc">Opis</string>
+    <string name="start">Početak</string>
+    <string name="end">Kraj</string>
+    <string name="type">Tip</string>
+    <string name="at">u</string>
+    <string name="submit">SAČUVAJ</string>
+    <string name="fill">Popunite sva polja!</string>
+    <string name="location">Odaberi lokaciju</string>
+    <string name="next">DALJE</string>
+    <string name="upload">Dodaj fotografije</string>
+    <string name="take">Slikaj</string>
     <string-array name="period_values">
         <item>1 dan</item>
         <item>1 sedmica</item>

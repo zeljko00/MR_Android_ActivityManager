@@ -15,11 +15,33 @@
         android:id="@+id/navigation_list"
         android:name="etf.mr.project.activitymanager.fragments.ListFragment"
         android:label="@string/activity_list"
-        tools:layout="@layout/fragment_list" />
+        tools:layout="@layout/fragment_list" >
+        <action
+            android:id="@+id/action_navigation_list_to_navigation_location_picker"
+            app:destination="@id/navigation_location_picker" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_settings"
         android:name="etf.mr.project.activitymanager.fragments.SettingsFragment"
         android:label="@string/settings"
         tools:layout="@layout/fragment_settings" />
+    <fragment
+        android:id="@+id/navigation_new_activity"
+        android:name="etf.mr.project.activitymanager.fragments.NewActivityFragment"
+        android:label="@string/new_activity"
+        tools:layout="@layout/fragment_new_activity">
+    <action
+        android:id="@+id/action_navigation_new_activity_to_navigation_list"
+        app:destination="@id/navigation_list" />
+    </fragment>
+    <fragment
+        android:id="@+id/navigation_location_picker"
+        android:name="etf.mr.project.activitymanager.fragments.LocationPickerFragment"
+        android:label="@string/location"
+        tools:layout="@layout/fragment_location_picker" >
+    <action
+        android:id="@+id/action_navigation_location_picker_to_navigation_new_activity"
+        app:destination="@id/navigation_new_activity" />
+    </fragment>
 </navigation>

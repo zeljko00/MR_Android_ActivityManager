@@ -78,6 +78,10 @@
     </style>
     <style name="ActivityCard" parent="@style/Widget.MaterialComponents.CardView">
         <item name="cardCornerRadius">15dp</item>
+        <item name="cardElevation">2dp</item>
+    </style>
+    <style name="InputLabelStyle" parent="@style/Theme.AppCompat">
+        <item name="cardCornerRadius">15dp</item>
         <item name="cardBackgroundColor">@color/surface</item>
         <item name="cardElevation">10dp</item>
     </style>

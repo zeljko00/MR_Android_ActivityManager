@@ -53,6 +53,19 @@
     <string name="sure">Delete activity?</string>
     <string name="delete">DELETE</string>
     <string name="cancel">CANCEL</string>
+    <string name="new_activity">New Activity</string>
+    <string name="title">Title</string>
+    <string name="desc">Description</string>
+    <string name="start">Start</string>
+    <string name="end">End</string>
+    <string name="type">Type</string>
+    <string name="at">at</string>
+    <string name="submit">SUBMIT</string>
+    <string name="fill">Fill in all fields!</string>
+    <string name="location">Pick location</string>
+    <string name="next">NEXT</string>
+    <string name="upload">Upload images</string>
+    <string name="take">Tyke photo</string>
     <string-array name="period_values">
         <item>1 day</item>
         <item>1 week</item>
@@ -68,4 +81,5 @@
         <item>travel</item>
         <item>relaxation</item>
     </string-array>
+    <!-- TODO: Remove or change this placeholder text -->
 </resources>

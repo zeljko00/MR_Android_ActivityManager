@@ -10,8 +10,8 @@ public class Activity {
     private String desc;
     private String type;
     private String address;
-    private String x;
-    private String y;
+    private double x;
+    private double y;
     private Date starts;
     private Date ends;
 
@@ -47,19 +47,19 @@ public class Activity {
         this.address = address;
     }
 
-    public String getX() {
+    public double getX() {
         return x;
     }
 
-    public void setX(String x) {
+    public void setX(double x) {
         this.x = x;
     }
 
-    public String getY() {
+    public double getY() {
         return y;
     }
 
-    public void setY(String y) {
+    public void setY(double y) {
         this.y = y;
     }
 
@@ -87,4 +87,18 @@ public class Activity {
         this.id = id;
     }
 
+    @Override
+    public String toString() {
+        return "Activity{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", desc='" + desc + '\'' +
+                ", type='" + type + '\'' +
+                ", address='" + address + '\'' +
+                ", x='" + x + '\'' +
+                ", y='" + y + '\'' +
+                ", starts=" + starts +
+                ", ends=" + ends +
+                '}';
+    }
 }
