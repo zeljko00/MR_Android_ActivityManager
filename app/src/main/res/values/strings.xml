@@ -65,7 +65,7 @@
     <string name="location">Pick location</string>
     <string name="next">NEXT</string>
     <string name="upload">Upload images</string>
-    <string name="take">Tyke photo</string>
+    <string name="take">Take photo</string>
     <string-array name="period_values">
         <item>1 day</item>
         <item>1 week</item>

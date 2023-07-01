@@ -234,6 +234,7 @@ public class ListFragment extends Fragment {
         dto.setAddress(item.getAddress());
         dto.setX(item.getX());
         dto.setY(item.getY());
+        dto.setImgs(item.getImgs());
         if (item.getType().equals(getContext().getResources().getString(R.string.work_val)))
             dto.setType(getContext().getResources().getString(R.string.work));
         else if (item.getType().equals(getContext().getResources().getString(R.string.travel_val)))

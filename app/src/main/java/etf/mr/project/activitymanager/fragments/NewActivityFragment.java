@@ -2,9 +2,12 @@ package etf.mr.project.activitymanager.fragments;
 
 import static android.app.Activity.RESULT_OK;
 
+import android.Manifest;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Address;
@@ -12,7 +15,9 @@ import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
@@ -37,7 +42,10 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -59,6 +67,7 @@ public class NewActivityFragment extends Fragment {
 
     private static final int REQUEST_IMAGE_PICK = 1;
     private static final int REQUEST_IMAGE_CAPTURE = 2;
+    private static final int REQUEST_PERMISSION_CODE = 1;
     private static final DateFormat dateFormater = new SimpleDateFormat("dd/MM/yyyy HH:mm");
     private View view;
     private EditText title;
@@ -68,9 +77,13 @@ public class NewActivityFragment extends Fragment {
     private EditText endDate;
     private EditText startTime;
     private EditText endTime;
+
+
     private Uri takenPhoto;
     private Activity activity;
     private String path;
+
+    private List<String> imgs=new ArrayList<>();
     private double lat = 44.766769914889494;
     private double lng = 17.18670582069851;
 
@@ -176,7 +189,7 @@ public class NewActivityFragment extends Fragment {
                 l.setLayoutParams(layoutParams);
             });
         }
-        imageView=view.findViewById(R.id.image);
+        imageView = view.findViewById(R.id.image);
         return view;
     }
 
@@ -273,44 +286,46 @@ public class NewActivityFragment extends Fragment {
     }
 
     private void pickImage() {
-        Log.d("xxxx","picking");
+//        requestPermissions();
+        Log.d("xxxx", "picking");
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(intent, REQUEST_IMAGE_PICK);
+
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d("xxxx","receiving result");
-        Log.d("xxxx","request "+requestCode);
-        Log.d("xxxx","result "+resultCode);
-        if(data!=null)
-            Log.d("xxxx","intent present");
-        else Log.d("xxxx","intent=null");
+//        Log.d("xxxx", "receiving result");
+//        Log.d("xxxx", "request " + requestCode);
+//        Log.d("xxxx", "result " + resultCode);
+//        if (data != null)
+//            Log.d("xxxx", "intent present");
+//        else Log.d("xxxx", "intent=null");
+
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_IMAGE_PICK && resultCode == RESULT_OK) {
             if (data != null && data.getData() != null) {
                 Uri imageUri = data.getData();
-                Log.d("xxxx", imageUri.toString());
+                Bitmap image=getBitmapFromUri(imageUri);
+                try{
+                File imageFile=createPhotoFile();
+                saveImg(imageFile,image);
+                setPic(imageFile.getAbsolutePath());
+                Log.d("xxxx","path="+imageFile.getAbsolutePath());}catch(Exception e){
+                    e.printStackTrace();
+                    return;
+                }
             }
-        }
-        else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+        } else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             // Use the captured photo data
-            if (takenPhoto != null) {
-                setPic();
-                //works if you dont send extra data in intent to camera
-//                Bundle extras = data.getExtras();
-//                Bitmap imageBitmap = (Bitmap) extras.get("data");
-//                imageView.setImageBitmap(imageBitmap);
-//            galleryAddPic();
-
-
+            if (path != null) {
+                imgs.add(path);
+                setPic(path);
             }
-
-            // Do something with the photo
-            // ...
         }
     }
-//    private void galleryAddPic() {
+
+    //    private void galleryAddPic() {
 //        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
 //        File f = new File(path);
 //        Uri contentUri = Uri.fromFile(f);
@@ -326,10 +341,9 @@ public class NewActivityFragment extends Fragment {
 
                 if (photoFile != null) {
                     // Get the file URI
-                takenPhoto = FileProvider.getUriForFile(getContext(),
-                        "etf.mr.project.activitymanager", photoFile);
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, takenPhoto);
-
+                    takenPhoto = FileProvider.getUriForFile(getContext(),
+                            "etf.mr.project.activitymanager", photoFile);
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, takenPhoto);
                     // Start the camera intent
                     startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
                 }
@@ -350,11 +364,11 @@ public class NewActivityFragment extends Fragment {
                 ".jpg",         // suffix
                 storageDir      // directory
         );
-        path=imageFile.getAbsolutePath();
+        path = imageFile.getAbsolutePath();
         return imageFile;
     }
-    private void setPic() {
-        Log.d("xxxx",path);
+
+    private void setPic(String path) {
         // Get the dimensions of the View
         int targetW = imageView.getWidth();
         int targetH = imageView.getHeight();
@@ -369,7 +383,7 @@ public class NewActivityFragment extends Fragment {
         int photoH = bmOptions.outHeight;
 
         // Determine how much to scale down the image
-        int scaleFactor = Math.max(1, Math.min(photoW/targetW, photoH/targetH));
+        int scaleFactor = Math.max(1, Math.min(photoW / targetW, photoH / targetH));
 
         // Decode the image file into a Bitmap sized to fill the View
         bmOptions.inJustDecodeBounds = false;
@@ -377,7 +391,73 @@ public class NewActivityFragment extends Fragment {
         bmOptions.inPurgeable = true;
 
         Bitmap bitmap = BitmapFactory.decodeFile(path, bmOptions);
-        Log.d("xxxx",bitmap.toString());
         imageView.setImageBitmap(bitmap);
     }
+
+    public Bitmap getBitmapFromUri(Uri uri) {
+        try {
+            // Use the content resolver to open an input stream from the Uri
+            InputStream inputStream = getContext().getContentResolver().openInputStream(uri);
+
+            // Decode the input stream into a Bitmap
+            Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+
+            // Close the input stream
+            inputStream.close();
+
+            return bitmap;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+    private void saveImg(File file, Bitmap img){
+        OutputStream outputStream = null;
+        try {
+            outputStream = new FileOutputStream(file);
+            img.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+            outputStream.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (outputStream != null) {
+                    outputStream.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+//    public String getAbsolutePathFromUri(Uri uri) {
+//        String[] projection = {MediaStore.Images.Media.DATA};
+//        Cursor cursor = getContext().getContentResolver().query(uri, projection, null, null, null);
+//        if (cursor != null && cursor.moveToFirst()) {
+//            int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+//            String filePath = cursor.getString(columnIndex);
+//            cursor.close();
+//            return filePath;
+//        }
+//        return null;
+//    }
+
+//    private void requestPermissions() {
+//        String[] permissions = {Manifest.permission.READ_EXTERNAL_STORAGE};
+//        ActivityCompat.requestPermissions(getActivity(), permissions, REQUEST_PERMISSION_CODE);
+//        Log.d("xxxx","REQUESTED");
+//    }
+//
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+//        if (requestCode == REQUEST_PERMISSION_CODE) {
+//            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                Log.d("xxxx","GRANTED");
+//                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//                startActivityForResult(intent, REQUEST_IMAGE_PICK);
+//            } else {
+//                Log.d("xxxx","NOT GRANTED");
+//            }
+//        }
+//    }
 }

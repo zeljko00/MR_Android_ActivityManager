@@ -2,7 +2,9 @@ package etf.mr.project.activitymanager.model;
 
 import android.graphics.drawable.Drawable;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class ActivityDTO {
     private long id;
@@ -18,6 +20,8 @@ public class ActivityDTO {
     private String date;
     private Date ends;
     private Drawable icon;
+
+    private List<String> imgs=new ArrayList<>();
 
     public long getId() {
         return id;
@@ -122,5 +126,13 @@ public class ActivityDTO {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public List<String> getImgs() {
+        return imgs;
+    }
+
+    public void setImgs(List<String> imgs) {
+        this.imgs = imgs;
     }
 }
