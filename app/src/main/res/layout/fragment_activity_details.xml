@@ -138,7 +138,7 @@
         android:id="@+id/stop_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="@dimen/xxlarge_margin"
         app:tint="@color/primary"
         app:layout_constraintBottom_toBottomOf="parent"

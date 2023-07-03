@@ -1,9 +1,14 @@
 package etf.mr.project.activitymanager.model;
 
-import java.util.ArrayList;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
+
 import java.util.Date;
-import java.util.List;
-public class Activity {
+
+@Entity(tableName="activities")
+public class ActivityEntity {
+    @PrimaryKey(autoGenerate = true)
     private long id;
     private String title;
     private String desc;
@@ -13,8 +18,6 @@ public class Activity {
     private double y;
     private Date starts;
     private Date ends;
-
-    private List<String> imgs=new ArrayList<>();
 
     public String getTitle() {
         return title;
@@ -88,17 +91,9 @@ public class Activity {
         this.id = id;
     }
 
-    public List<String> getImgs() {
-        return imgs;
-    }
-
-    public void setImgs(List<String> imgs) {
-        this.imgs = imgs;
-    }
-
     @Override
     public String toString() {
-        return "Activity{" +
+        return "ActivityEntity{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", desc='" + desc + '\'' +
@@ -108,7 +103,6 @@ public class Activity {
                 ", y=" + y +
                 ", starts=" + starts +
                 ", ends=" + ends +
-                ", imgs=" + imgs +
                 '}';
     }
 }

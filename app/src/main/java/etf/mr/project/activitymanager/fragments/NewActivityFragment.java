@@ -4,6 +4,7 @@ import static android.app.Activity.RESULT_OK;
 
 import android.Manifest;
 import android.app.DatePickerDialog;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -13,16 +14,20 @@ import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.Room;
 
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -59,12 +64,18 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import etf.mr.project.activitymanager.MainActivity;
 import etf.mr.project.activitymanager.R;
 import etf.mr.project.activitymanager.adapters.CarouselAdapter;
+import etf.mr.project.activitymanager.db.AppDatabase;
+import etf.mr.project.activitymanager.interfaces.ActivityDAO;
 import etf.mr.project.activitymanager.model.Activity;
 import etf.mr.project.activitymanager.model.ActivityDTO;
+import etf.mr.project.activitymanager.model.ActivityEntity;
+import etf.mr.project.activitymanager.model.ActivityPOJO;
+import etf.mr.project.activitymanager.model.Image;
 import etf.mr.project.activitymanager.viewmodel.ActivitiesViewModel;
 import etf.mr.project.activitymanager.viewmodel.SelectedActivityViewModel;
 import etf.mr.project.activitymanager.viewmodel.SharedViewModel;
@@ -87,8 +98,6 @@ public class NewActivityFragment extends Fragment {
     private EditText endDate;
     private EditText startTime;
     private EditText endTime;
-
-    private Activity activity;
     private String path;
 
     private List<String> imgs = new ArrayList<>();
@@ -101,8 +110,12 @@ public class NewActivityFragment extends Fragment {
     private String mParam1;
     private String mParam2;
     private RecyclerView carousel;
+    private AppDatabase db;
+    private ActivityDAO activityDAO;
 
     private CarouselAdapter carouselAdapter;
+
+    private static final String CHANEL_ID = "ma_chanel";
 
     public NewActivityFragment() {
         // Required empty public constructor
@@ -122,9 +135,14 @@ public class NewActivityFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         sharedViewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
-        activitiesViewModel=new ViewModelProvider(requireActivity()).get(ActivitiesViewModel.class);
+        activitiesViewModel = new ViewModelProvider(requireActivity()).get(ActivitiesViewModel.class);
 
         geocoder = new Geocoder(this.getContext(), Locale.getDefault());
+
+        db = Room.databaseBuilder(getContext(), AppDatabase.class, "app-database")
+                .build();
+
+        activityDAO = db.activityDAO();
 
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
@@ -172,19 +190,43 @@ public class NewActivityFragment extends Fragment {
         submit.setOnClickListener((View v) -> {
             if (!checkInputData())
                 Toast.makeText(getContext(), getContext().getResources().getString(R.string.fill), Toast.LENGTH_SHORT).show();
-            activity = collectData();
-            Random gen=new Random();
+            else {
+                ActivityEntity activity = collectData();
+//                showNotification(activity.getStarts());
+                if (activityDAO != null) {
+                    new AsyncTask<Void, Void, Long>() {
+                        @Override
+                        protected Long doInBackground(Void... voids) {
+                            return activityDAO.insertActivity(activity);
+                        }
 
-            //postaviti id dbojen iz baze
-            activity.setId(gen.nextInt());
+                        @Override
+                        protected void onPostExecute(Long data) {
+                            activity.setId(data);
+                            List<Image> images = imgs.stream().map(i -> {
+                                Image image = new Image();
+                                image.setPath(i);
+                                image.setActivity_id(data);
+                                return image;
+                            }).collect(Collectors.toList());
+                            new AsyncTask<Void, Void, Void>() {
+                                @Override
+                                protected Void doInBackground(Void... voids) {
+                                    for (Image i : images)
+                                        activityDAO.insertImg(i);
+                                    return null;
+                                }
 
-            Log.d("submit", activity.toString());
-            ActivityDTO dto=((MainActivity) getActivity()).map(activity);
-            activitiesViewModel.addActivity(dto);
+                            }.execute();
+                            ActivityDTO dto = ((MainActivity) getActivity()).map(activity, images);
+                            activitiesViewModel.addActivity(dto);
+                            Navigation.findNavController(v).navigate(R.id.action_navigation_new_activity_to_navigation_list);
+                        }
+                    }.execute();
+                }
 
-            //upis u bazu
+            }
 
-            Navigation.findNavController(v).navigate(R.id.action_navigation_new_activity_to_navigation_list);
         });
 
         MaterialButton upload = view.findViewById(R.id.upload);
@@ -280,14 +322,13 @@ public class NewActivityFragment extends Fragment {
         timePickerDialog.show();
     }
 
-    private Activity collectData() {
-        Activity activity = new Activity();
+    private ActivityEntity collectData() {
+        ActivityEntity activity = new ActivityEntity();
         activity.setTitle(title.getText().toString());
         activity.setDesc(desc.getText().toString());
-activity.setImgs(imgs);
         if (type.getText().toString().equals(getResources().getString(R.string.work)))
             activity.setType(getResources().getString(R.string.work_val));
-        if (type.getText().toString().equals(getResources().getString(R.string.travel)))
+        else if (type.getText().toString().equals(getResources().getString(R.string.travel)))
             activity.setType(getResources().getString(R.string.travel_val));
         else
             activity.setType(getResources().getString(R.string.freetime_val));
@@ -398,7 +439,7 @@ activity.setImgs(imgs);
     }
 
     private void showPhoto(ImageView imageView, String path) {
-        Bitmap bitmap=BitmapFactory.decodeFile(path);
+        Bitmap bitmap = BitmapFactory.decodeFile(path);
         imageView.setImageBitmap(bitmap);
     }
 
@@ -434,6 +475,29 @@ activity.setImgs(imgs);
             }
         }
         return true;
+    }
+    private void showNotification(Date start) {
+        // Create a notification builder
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(getContext(), CHANEL_ID)
+                .setSmallIcon(R.drawable.ic_notify)
+                .setContentTitle(getResources().getString(R.string.notify_label))
+                .setContentText("Notification Text")
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setWhen(start.getTime()-60000);
+
+
+        // Create an explicit intent for the notification's destination
+        Intent intent = new Intent(getContext(), MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        builder.setContentIntent(pendingIntent);
+
+        // Show the notification
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getContext());
+        if (ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            Log.d("notify","no permission");
+            return;
+        }else notificationManager.notify(11, builder.build());
+
     }
 }
 

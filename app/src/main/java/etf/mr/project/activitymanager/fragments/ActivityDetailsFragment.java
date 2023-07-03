@@ -1,10 +1,14 @@
 package etf.mr.project.activitymanager.fragments;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -21,20 +25,24 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.carousel.CarouselLayoutManager;
 import com.google.android.material.textview.MaterialTextView;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import etf.mr.project.activitymanager.R;
 //import etf.mr.project.activitymanager.carousel.CarouselLayoutManager;
 import etf.mr.project.activitymanager.adapters.ActivityListAdapter;
 import etf.mr.project.activitymanager.adapters.CarouselAdapter;
+import etf.mr.project.activitymanager.databinding.ActivityMainBinding;
 import etf.mr.project.activitymanager.dialogs.DeleteActivityDialog;
 import etf.mr.project.activitymanager.interfaces.DeleteActivityInterface;
 import etf.mr.project.activitymanager.model.ActivityDTO;
+import etf.mr.project.activitymanager.model.ActivityPOJO;
 import etf.mr.project.activitymanager.viewmodel.SelectedActivityViewModel;
 
 public class ActivityDetailsFragment extends Fragment implements OnMapReadyCallback {

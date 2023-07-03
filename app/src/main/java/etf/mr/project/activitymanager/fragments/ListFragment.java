@@ -1,14 +1,19 @@
 package etf.mr.project.activitymanager.fragments;
 
 import android.graphics.PorterDuff;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.Room;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,6 +24,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -31,11 +37,15 @@ import java.util.stream.Collectors;
 import etf.mr.project.activitymanager.MainActivity;
 import etf.mr.project.activitymanager.R;
 import etf.mr.project.activitymanager.adapters.ActivityListAdapter;
+import etf.mr.project.activitymanager.databinding.ActivityMainBinding;
+import etf.mr.project.activitymanager.db.AppDatabase;
 import etf.mr.project.activitymanager.dialogs.DeleteActivityDialog;
+import etf.mr.project.activitymanager.interfaces.ActivityDAO;
 import etf.mr.project.activitymanager.interfaces.DeleteActivityInterface;
 import etf.mr.project.activitymanager.interfaces.NewActivityListener;
 import etf.mr.project.activitymanager.model.Activity;
 import etf.mr.project.activitymanager.model.ActivityDTO;
+import etf.mr.project.activitymanager.model.ActivityPOJO;
 import etf.mr.project.activitymanager.viewmodel.ActivitiesViewModel;
 import etf.mr.project.activitymanager.viewmodel.SelectedActivityViewModel;
 
@@ -51,6 +61,9 @@ public class ListFragment extends Fragment {
     private RecyclerView.LayoutManager layoutManager;
     private SelectedActivityViewModel selectedActivityViewModel;
     private ActivitiesViewModel activitiesViewModel;
+
+    private AppDatabase db;
+    private ActivityDAO activityDAO;
 
     public ListFragment() {
         // Required empty public constructor
@@ -81,6 +94,12 @@ public class ListFragment extends Fragment {
                 mAdapter.changeData(activitiesViewModel.getSharedData().getValue());
             }
         });
+
+
+        db = Room.databaseBuilder(getActivity(), AppDatabase.class, "app-database")
+                .build();
+
+        activityDAO = db.activityDAO();
 
 
         if (getArguments() != null) {
@@ -120,7 +139,13 @@ public class ListFragment extends Fragment {
                     @Override
                     public void delete(long id) {
 
-                        // obrisati iz baze
+                        AsyncTask.execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                activityDAO.deleteActivity(id);
+                            }
+
+                        });
 
                         activitiesViewModel.setSharedData(activitiesViewModel.getSharedData().getValue().stream().filter(a -> a.getId() != id).collect(Collectors.toList()));
                         mAdapter.changeData(activitiesViewModel.getSharedData().getValue());

@@ -2,6 +2,7 @@ package etf.mr.project.activitymanager.adapters;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,13 +10,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+import etf.mr.project.activitymanager.MainActivity;
 import etf.mr.project.activitymanager.R;
 import etf.mr.project.activitymanager.model.ActivityDTO;
+import etf.mr.project.activitymanager.model.Image;
 
 public class CarouselAdapter extends RecyclerView.Adapter<CarouselAdapter.ViewHolder>{
 
@@ -60,9 +64,18 @@ public class CarouselAdapter extends RecyclerView.Adapter<CarouselAdapter.ViewHo
     }
 
     private void showPhoto(ImageView imageView, String path) {
+        new AsyncTask<Void, Void, Bitmap>() {
+            @Override
+            protected Bitmap doInBackground(Void... voids) {
+                return BitmapFactory.decodeFile(path);
+            }
 
-        Bitmap bitmap = BitmapFactory.decodeFile(path);
-        imageView.setImageBitmap(bitmap);
+            @Override
+            protected void onPostExecute(Bitmap data) {
+                imageView.setImageBitmap(data);
+            }
+        }.execute();
+
     }
 }
 

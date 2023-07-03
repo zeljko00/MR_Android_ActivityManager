@@ -68,6 +68,7 @@
     <string name="take">Take photo</string>
     <string name="details">Activity details</string>
     <string name="no_data">Empty list</string>
+    <string name="notify_label">Upcoming activities:</string>
     <string-array name="period_values">
         <item>1 day</item>
         <item>1 week</item>
