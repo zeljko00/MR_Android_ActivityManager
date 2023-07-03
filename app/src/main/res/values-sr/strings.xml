@@ -69,6 +69,7 @@
     <string name="upload">Dodaj fotografije</string>
     <string name="take">Slikaj</string>
     <string name="details">Informacije o aktivnosti</string>
+    <string name="no_data">Prazna lista</string>
     <string-array name="period_values">
         <item>1 dan</item>
         <item>1 sedmica</item>

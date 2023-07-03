@@ -40,6 +40,7 @@ import etf.mr.project.activitymanager.model.ActivityDTO;
 import etf.mr.project.activitymanager.model.CoordTuple;
 import etf.mr.project.activitymanager.viewmodel.ActivitiesViewModel;
 import etf.mr.project.activitymanager.viewmodel.SelectedActivityViewModel;
+import etf.mr.project.activitymanager.viewmodel.SelectedDateViewModel;
 import etf.mr.project.activitymanager.viewmodel.SharedViewModel;
 
 public class MainActivity extends AppCompatActivity {
@@ -48,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     private SharedViewModel sharedViewModel;
     private SelectedActivityViewModel selectedActivityViewModel;
     private ActivitiesViewModel activitiesViewModel;
+    private SelectedDateViewModel selectedDateViewModel;
     private static final String SELECTED_LANGUAGE = "Locale.Helper.Selected.Language";
 
     @Override
@@ -57,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
         sharedViewModel = new ViewModelProvider(this).get(SharedViewModel.class);
         selectedActivityViewModel = new ViewModelProvider(this).get(SelectedActivityViewModel.class);
         activitiesViewModel=new ViewModelProvider(this).get(ActivitiesViewModel.class);
+        selectedDateViewModel=new ViewModelProvider(this).get(SelectedDateViewModel.class);
 
         initializeData();
 

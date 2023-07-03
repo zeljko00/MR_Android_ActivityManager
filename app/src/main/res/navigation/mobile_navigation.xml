@@ -9,7 +9,11 @@
         android:id="@+id/navigation_calendar"
         android:name="etf.mr.project.activitymanager.fragments.CalendarFragment"
         android:label="@string/activity_calendar"
-        tools:layout="@layout/fragment_calendar" />
+        tools:layout="@layout/fragment_calendar" >
+    <action
+        android:id="@+id/action_navigation_calendar_to_navigation_details"
+        app:destination="@id/navigation_details" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_list"

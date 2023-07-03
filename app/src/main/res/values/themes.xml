@@ -18,9 +18,7 @@
         <!-- Other ActionBar attributes -->
     </style>
     <style name="BottomNavigationViewStyle" parent="Widget.MaterialComponents.BottomNavigationView.Colored">
-        <item name="itemIconTint">@color/onSurface</item>
-        <item name="itemTextColor">@color/onSurface</item>
-        <item name="android:background">@color/surface</item>
+
     </style>
     <style name="FragmentStyle" parent="@style/Theme.AppCompat">
         <item name="android:background">@color/background</item>
