@@ -97,20 +97,20 @@
         app:layout_constraintHorizontal_bias="0.0"
         android:layout_marginStart="25dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/notify_lbl"
+        app:layout_constraintTop_toBottomOf="@+id/ahead_lbl"
         app:layout_constraintVertical_bias="0.035" />
 
     <Switch
         android:id="@+id/switchBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="25dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        android:layout_marginStart="25dp"
         app:layout_constraintStart_toEndOf="@+id/notify_lbl"
         app:layout_constraintTop_toBottomOf="@+id/view"
-        app:layout_constraintVertical_bias="0.096" />
+        app:layout_constraintVertical_bias="0.091" />
 
     <TextView
         android:id="@+id/period"
@@ -122,6 +122,32 @@
         app:layout_constraintHorizontal_bias="0.0"
         android:layout_marginStart="25dp"
         app:layout_constraintStart_toEndOf="@+id/period_lbl"
-        app:layout_constraintTop_toBottomOf="@+id/switchBtn"
+        app:layout_constraintTop_toBottomOf="@+id/ahead"
+        app:layout_constraintVertical_bias="0.035" />
+
+    <TextView
+        android:id="@+id/ahead_lbl"
+        style="@style/SettingsOption"
+        android:layout_width="@dimen/settings_option_width"
+        android:layout_height="@dimen/settings_option_height"
+        android:text="@string/ahead"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        android:layout_marginStart="25dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/notify_lbl"
+        app:layout_constraintVertical_bias="0.035" />
+    <TextView
+        android:id="@+id/ahead"
+        style="@style/SettingsValue"
+        android:layout_width="@dimen/settings_value_width"
+        android:layout_height="@dimen/settings_value_height"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        android:layout_marginStart="25dp"
+        app:layout_constraintStart_toEndOf="@+id/ahead_lbl"
+        app:layout_constraintTop_toBottomOf="@+id/notify_lbl"
         app:layout_constraintVertical_bias="0.035" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -30,6 +30,7 @@ public class SettingsFragment extends Fragment{
 
     private static final String SELECTED_LANGUAGE = "Locale.Helper.Selected.Language";
     private static final String NOTIFICATIONS_PERIOD = "Notifications.Period";
+    private static final String NOTIFICATIONS_TIMING = "Notifications.Timing";
     private static final String NOTIFICATIONS_ENABLED = "Notifications.Enabled";
     private String mParam1;
     private String mParam2;
@@ -69,6 +70,14 @@ public class SettingsFragment extends Fragment{
                 showLanguageDialog();
             }
         });
+        TextView aheadLbl = rootView.findViewById(R.id.ahead_lbl);
+        aheadLbl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showTimingDialog();
+            }
+        });
+
         TextView periodLbl = rootView.findViewById(R.id.period_lbl);
         periodLbl.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,6 +99,7 @@ public class SettingsFragment extends Fragment{
             String lang = sharedPreferences.getString(SELECTED_LANGUAGE, getActivity().getResources().getString(R.string.eng_value));
             String langLabel=lang.equals(getActivity().getResources().getString(R.string.eng_value))?getActivity().getResources().getString(R.string.eng):getActivity().getResources().getString(R.string.srb);
             String period=sharedPreferences.getString(NOTIFICATIONS_PERIOD, getActivity().getResources().getStringArray(R.array.period_values)[0]);
+            String timing=sharedPreferences.getString(NOTIFICATIONS_TIMING, getActivity().getResources().getStringArray(R.array.period_values)[0]);
             String periodLabel;
             if(period.equals(getActivity().getResources().getString(R.string.p1d_value)))
                 periodLabel=getActivity().getResources().getString(R.string.p1d);
@@ -97,9 +107,17 @@ public class SettingsFragment extends Fragment{
                 periodLabel=getActivity().getResources().getString(R.string.p1w);
             else
                 periodLabel=getActivity().getResources().getString(R.string.p1h);
+            String timingLabel;
+            if(timing.equals(getActivity().getResources().getString(R.string.p1d_value)))
+                timingLabel=getActivity().getResources().getString(R.string.p1d);
+            else if(timing.equals(getActivity().getResources().getString(R.string.p1w_value)))
+                timingLabel=getActivity().getResources().getString(R.string.p1w);
+            else
+                timingLabel=getActivity().getResources().getString(R.string.p1h);
             boolean enabled=sharedPreferences.getBoolean(NOTIFICATIONS_ENABLED,true);
             changeSelectedLng(langLabel);
             changeSelectedPeriod(periodLabel);
+            changeSelectedTiming(timingLabel);
             changeEnabled(enabled);
         }catch(Exception e){
         }
@@ -111,6 +129,9 @@ public class SettingsFragment extends Fragment{
     }
     private void changeSelectedPeriod(String period){
         ((TextView)rootView.findViewById(R.id.period)).setText(period);
+    }
+    private void changeSelectedTiming(String period){
+        ((TextView)rootView.findViewById(R.id.ahead)).setText(period);
     }
     private void changeEnabled(boolean enabled){
         Switch switchBtn = rootView.findViewById(R.id.switchBtn);
@@ -150,6 +171,21 @@ public class SettingsFragment extends Fragment{
         editor.putString(NOTIFICATIONS_PERIOD, periodValue);
         editor.apply();
     }
+    private void saveSelectedTiming(String period){
+        SharedPreferences shPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        SharedPreferences.Editor editor = shPreferences.edit();
+        String periodValue;
+        if(period.equals(getActivity().getResources().getString(R.string.p1d)))
+            periodValue=getActivity().getResources().getString(R.string.p1d_value);
+        else if(period.equals(getActivity().getResources().getString(R.string.p1w)))
+            periodValue=getActivity().getResources().getString(R.string.p1w_value);
+        else
+            periodValue=getActivity().getResources().getString(R.string.p1h_value);
+        Log.d("timing","selected value="+period);
+        Log.d("timing","value to save="+periodValue);
+        editor.putString(NOTIFICATIONS_TIMING, periodValue);
+        editor.apply();
+    }
     private void saveNotificationsEnabled(boolean enabled){
         SharedPreferences shPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         SharedPreferences.Editor editor = shPreferences.edit();
@@ -173,6 +209,17 @@ public class SettingsFragment extends Fragment{
             public void change(String period) {
                 changeSelectedPeriod(period);
                 saveSelectedPeriod(period);
+            }
+        });
+        dialogFragment.show(getChildFragmentManager(), "PeriodDialog");
+    }
+    private void showTimingDialog() {
+        PeriodDialog dialogFragment = new PeriodDialog();
+        dialogFragment.setPeriodChangeListenerInterface(new PeriodChangeListenerInterface() {
+            @Override
+            public void change(String period) {
+                changeSelectedTiming(period);
+                saveSelectedTiming(period);
             }
         });
         dialogFragment.show(getChildFragmentManager(), "PeriodDialog");

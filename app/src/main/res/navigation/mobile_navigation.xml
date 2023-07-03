@@ -13,6 +13,9 @@
     <action
         android:id="@+id/action_navigation_calendar_to_navigation_details"
         app:destination="@id/navigation_details" />
+        <action
+            android:id="@+id/action_navigation_calendar_to_navigation_upcoming"
+            app:destination="@id/navigation_upcoming" />
     </fragment>
 
     <fragment
@@ -56,4 +59,13 @@
         android:name="etf.mr.project.activitymanager.fragments.ActivityDetailsFragment"
         android:label="@string/details"
         tools:layout="@layout/fragment_activity_details" />
+    <fragment
+        android:id="@+id/navigation_upcoming"
+        android:name="etf.mr.project.activitymanager.fragments.UpcomingActivities"
+        android:label="@string/upcoming"
+        tools:layout="@layout/fragment_upcoming_activities" >
+        <action
+            android:id="@+id/action_navigation_upcoming_to_navigation_details"
+            app:destination="@id/navigation_details" />
+    </fragment>
 </navigation>

@@ -71,6 +71,10 @@
     <string name="details">Informacije o aktivnosti</string>
     <string name="no_data">Prazna lista</string>
     <string name="notify_label">Aktivnosti u bliskoj budućnosti:</string>
+    <string name="ahead">Tajming notifikacija</string>
+    <string name="remind">Uskoro ## aktivnosti!</string>
+    <string name="view">POGLEDAJ</string>
+    <string name="upcoming">Nadolazeće aktivnosti</string>
     <string-array name="period_values">
         <item>1 dan</item>
         <item>1 sedmica</item>

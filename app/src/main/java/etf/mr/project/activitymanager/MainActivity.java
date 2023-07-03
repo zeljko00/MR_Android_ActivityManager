@@ -23,6 +23,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -54,6 +55,7 @@ import etf.mr.project.activitymanager.model.ActivityEntity;
 import etf.mr.project.activitymanager.model.ActivityPOJO;
 import etf.mr.project.activitymanager.model.CoordTuple;
 import etf.mr.project.activitymanager.model.Image;
+import etf.mr.project.activitymanager.model.UpcomingData;
 import etf.mr.project.activitymanager.viewmodel.ActivitiesViewModel;
 import etf.mr.project.activitymanager.viewmodel.SelectedActivityViewModel;
 import etf.mr.project.activitymanager.viewmodel.SelectedDateViewModel;
@@ -106,38 +108,39 @@ public class MainActivity extends AppCompatActivity {
         config.setLocale(locale);
         getResources().updateConfiguration(config, getResources().getDisplayMetrics());
 
-        Calendar calendar=Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
 
-        String period=sharedPreferences.getString(NOTIFICATIONS_PERIOD, "1dddd");
-        Log.d("reminder","period: "+period);
-        if(period.equals(getResources().getString(R.string.p1h_value)))
-            calendar.add(Calendar.HOUR_OF_DAY,1);
-        else if(period.equals(getResources().getString(R.string.p1d_value)))
-            calendar.add(Calendar.DATE,1);
+        String period = sharedPreferences.getString(NOTIFICATIONS_PERIOD, "1dddd");
+        Log.d("reminder", "period: " + period);
+        if (period.equals(getResources().getString(R.string.p1h_value)))
+            calendar.add(Calendar.HOUR_OF_DAY, 1);
+        else if (period.equals(getResources().getString(R.string.p1d_value)))
+            calendar.add(Calendar.DATE, 1);
         else
-            calendar.add(Calendar.DATE,7);
-        Log.d("reminder","before: "+calendar.getTime());
+            calendar.add(Calendar.DATE, 7);
+        Log.d("reminder", "before: " + calendar.getTime());
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
                 List<ActivityPOJO> entities = activityDAO.getActivities();
                 List<ActivityDTO> data = entities.stream().map(a -> map(a.getActivity(), a.getImgs())).collect(Collectors.toList());
-                List<ActivityDTO> toNotify=data.stream().filter(a -> {
-                    return a.getStarts().compareTo(calendar.getTime())<0;
+                List<ActivityDTO> toNotify = data.stream().filter(a -> {
+                    return a.getStarts().compareTo(calendar.getTime()) < 0;
                 }).collect(Collectors.toList());
-                Log.d("reminder","to notify: "+toNotify.toString());
+                Log.d("reminder", "to notify: " + toNotify.toString());
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         activitiesViewModel.setSharedData(data);
-                        showNotification(toNotify.stream().map(a -> a.getTitle()).collect(Collectors.toList()));
                         binding = ActivityMainBinding.inflate(getLayoutInflater());
                         setContentView(binding.getRoot());
+                        showNotification(toNotify);
+
 
                         BottomNavigationView navView = findViewById(R.id.nav_view);
                         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                                R.id.navigation_details, R.id.navigation_calendar, R.id.navigation_list, R.id.navigation_settings, R.id.navigation_new_activity, R.id.navigation_location_picker)
+                                R.id.navigation_upcoming,R.id.navigation_details, R.id.navigation_calendar, R.id.navigation_list, R.id.navigation_settings, R.id.navigation_new_activity, R.id.navigation_location_picker)
                                 .build();
 
                         // fragment navigation setup
@@ -290,30 +293,52 @@ public class MainActivity extends AppCompatActivity {
         return dto;
     }
 
-    private void showNotification(List<String> list) {
-        String content="";
-        for(int i=1; i<=list.size(); i++){
-            content+=list.get(i-1)+System.lineSeparator()+(i== list.size()?"":"  |  ");
-        }
-        // Create a notification builder
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANEL_ID)
-                .setSmallIcon(R.drawable.ic_notify)
-                .setContentTitle(getResources().getString(R.string.notify_label))
-                .setContentText(content)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+    //    private void showNotification(List<String> list) {
+//        String content="";
+//        for(int i=1; i<=list.size(); i++){
+//            content+=list.get(i-1)+System.lineSeparator()+(i== list.size()?"":"  |  ");
+//        }
+//        // Create a notification builder
+//        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANEL_ID)
+//                .setSmallIcon(R.drawable.ic_notify)
+//                .setContentTitle(getResources().getString(R.string.notify_label))
+//                .setContentText(content)
+//                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+//
+//
+//        // Create an explicit intent for the notification's destination
+//        Intent intent = new Intent(this, MainActivity.class);
+//        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+//        builder.setContentIntent(pendingIntent);
+//
+//        // Show the notification
+//        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+//        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+//            Log.d("notify", "no permission");
+//            return;
+//        } else notificationManager.notify(11, builder.build());
+//
+//    }
+    private void showNotification(List<ActivityDTO> list) {
+        Snackbar snackbar = Snackbar.make(binding.getRoot(), getResources().getString(R.string.remind).replace("##",Integer.toString(list.size())), Snackbar.LENGTH_SHORT);
 
+        android.app.Activity act=this;
+        snackbar.setAction(getResources().getString(R.string.view), new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                NavController navController = Navigation.findNavController(act, R.id.nav_host_fragment_activity_main);
 
-        // Create an explicit intent for the notification's destination
-        Intent intent = new Intent(this, MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        builder.setContentIntent(pendingIntent);
+// Create a bundle to hold the data
+                Bundle bundle = new Bundle();
+                UpcomingData data=new UpcomingData();
+                data.setData(list);
+                bundle.putSerializable("data", data); // Replace "key" with the actual argument key and customObject with your custom object
 
-        // Show the notification
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            Log.d("notify", "no permission");
-            return;
-        } else notificationManager.notify(11, builder.build());
+// Navigate to the fragment and set the arguments
+                navController.navigate(R.id.navigation_upcoming, bundle);
+            }
+        });
+        snackbar.show();
 
     }
 }

@@ -18,7 +18,7 @@
     <string name="p1d_value">1d</string>
     <string name="p1w">1 week</string>
     <string name="p1w_value">1w</string>
-    <string name="p1h">1 sat</string>
+    <string name="p1h">1 hour</string>
     <string name="p1h_value">1h</string>
     <string name="mon">MON</string>
     <string name="tue">TUE</string>
@@ -69,6 +69,9 @@
     <string name="details">Activity details</string>
     <string name="no_data">Empty list</string>
     <string name="notify_label">Upcoming activities:</string>
+    <string name="ahead">Notification timing</string>
+    <string name="remind">## upcoming activities!</string>
+    <string name="view">VIEW</string>
     <string-array name="period_values">
         <item>1 day</item>
         <item>1 week</item>
@@ -84,4 +87,6 @@
         <item>travel</item>
         <item>relaxation</item>
     </string-array>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="upcoming">Upcoming activities</string>
 </resources>

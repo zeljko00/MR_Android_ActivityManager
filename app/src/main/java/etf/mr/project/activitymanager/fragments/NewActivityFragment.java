@@ -3,10 +3,13 @@ package etf.mr.project.activitymanager.fragments;
 import static android.app.Activity.RESULT_OK;
 
 import android.Manifest;
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.PendingIntent;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -30,6 +33,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
 
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -66,6 +70,7 @@ import java.util.Locale;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+import etf.mr.project.activitymanager.AlarmBroadcastReceiver;
 import etf.mr.project.activitymanager.MainActivity;
 import etf.mr.project.activitymanager.R;
 import etf.mr.project.activitymanager.adapters.CarouselAdapter;
@@ -113,9 +118,12 @@ public class NewActivityFragment extends Fragment {
     private AppDatabase db;
     private ActivityDAO activityDAO;
 
+
     private CarouselAdapter carouselAdapter;
 
     private static final String CHANEL_ID = "ma_chanel";
+    private static final String NOTIFICATIONS_TIMING = "Notifications.Timing";
+    private static final String NOTIFICATIONS_ENABLED = "Notifications.Enabled";
 
     public NewActivityFragment() {
         // Required empty public constructor
@@ -134,7 +142,7 @@ public class NewActivityFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        sharedViewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
+       sharedViewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
         activitiesViewModel = new ViewModelProvider(requireActivity()).get(ActivitiesViewModel.class);
 
         geocoder = new Geocoder(this.getContext(), Locale.getDefault());
@@ -192,7 +200,7 @@ public class NewActivityFragment extends Fragment {
                 Toast.makeText(getContext(), getContext().getResources().getString(R.string.fill), Toast.LENGTH_SHORT).show();
             else {
                 ActivityEntity activity = collectData();
-//                showNotification(activity.getStarts());
+                showNotification(activity);
                 if (activityDAO != null) {
                     new AsyncTask<Void, Void, Long>() {
                         @Override
@@ -476,28 +484,27 @@ public class NewActivityFragment extends Fragment {
         }
         return true;
     }
-    private void showNotification(Date start) {
-        // Create a notification builder
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(getContext(), CHANEL_ID)
-                .setSmallIcon(R.drawable.ic_notify)
-                .setContentTitle(getResources().getString(R.string.notify_label))
-                .setContentText("Notification Text")
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setWhen(start.getTime()-60000);
+    private void showNotification(ActivityEntity activityDTO) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
-
-        // Create an explicit intent for the notification's destination
-        Intent intent = new Intent(getContext(), MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        builder.setContentIntent(pendingIntent);
-
-        // Show the notification
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getContext());
-        if (ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            Log.d("notify","no permission");
-            return;
-        }else notificationManager.notify(11, builder.build());
-
+        if(sharedPreferences.getBoolean(NOTIFICATIONS_ENABLED,false)){
+            Calendar calendar=Calendar.getInstance();
+            calendar.setTime(activityDTO.getStarts());
+            String timing=sharedPreferences.getString(NOTIFICATIONS_TIMING,"1h");
+            Log.d("qqqq","timing="+timing);
+            if(timing.equals(getResources().getString(R.string.p1h_value)))
+                calendar.add(Calendar.HOUR_OF_DAY,-1);
+            else if(timing.equals(getResources().getString(R.string.p1d_value)))
+                calendar.add(Calendar.DATE,-1);
+            else
+                calendar.add(Calendar.DATE,-7);
+            Log.d("qqqq","AlarmReceiver will be invoked at "+calendar.getTime().toString());
+            AlarmManager alarmManager = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
+            Intent intent = new Intent(getContext(), AlarmBroadcastReceiver.class);
+            intent.putExtra("content",activityDTO.getTitle()+" - "+dateFormater.format(activityDTO.getStarts()));
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), 0, intent,0);
+            alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+        }
     }
 }
 
