@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -32,8 +33,10 @@ import etf.mr.project.activitymanager.R;
 import etf.mr.project.activitymanager.adapters.ActivityListAdapter;
 import etf.mr.project.activitymanager.dialogs.DeleteActivityDialog;
 import etf.mr.project.activitymanager.interfaces.DeleteActivityInterface;
+import etf.mr.project.activitymanager.interfaces.NewActivityListener;
 import etf.mr.project.activitymanager.model.Activity;
 import etf.mr.project.activitymanager.model.ActivityDTO;
+import etf.mr.project.activitymanager.viewmodel.ActivitiesViewModel;
 import etf.mr.project.activitymanager.viewmodel.SelectedActivityViewModel;
 
 public class ListFragment extends Fragment {
@@ -46,9 +49,8 @@ public class ListFragment extends Fragment {
     private RecyclerView recyclerView;
     private ActivityListAdapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
-    private List<Activity> activityList = new ArrayList<>();
-    private List<ActivityDTO> data = new ArrayList<>();
     private SelectedActivityViewModel selectedActivityViewModel;
+    private ActivitiesViewModel activitiesViewModel;
 
     public ListFragment() {
         // Required empty public constructor
@@ -66,11 +68,25 @@ public class ListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        selectedActivityViewModel = new ViewModelProvider(requireActivity()).get(SelectedActivityViewModel.class);
+        activitiesViewModel = new ViewModelProvider(requireActivity()).get(ActivitiesViewModel.class);
+        activitiesViewModel.setNewActivityListener(new NewActivityListener() {
+            @Override
+            public void newActivity(ActivityDTO activityDTO) {
+                activitiesViewModel.getSharedData().getValue().add(activityDTO);
+                activitiesViewModel.getSharedData().getValue().sort((a1,a2)-> {
+                    return a1.getStarts().compareTo(a2.getStarts());
+                });
+                mAdapter.changeData(activitiesViewModel.getSharedData().getValue());
+            }
+        });
+
+
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-        selectedActivityViewModel = ((MainActivity) requireActivity()).getSelectedActivityViewModel();
     }
 
     @Override
@@ -79,64 +95,38 @@ public class ListFragment extends Fragment {
         setHasOptionsMenu(true);
         View view = inflater.inflate(R.layout.fragment_list, container, false);
 
-        Random gen=new Random();
-        for (int i = 0; i < 100; i++) {
-            Activity item = new Activity();
-            item.setX(gen.nextDouble()*i);
-            item.setY(gen.nextDouble()*i);
-            item.setId(i);
-            item.setTitle("Naslov " + (i + 1));
-            if (i % 5 == 0)
-                item.setTitle("NaslovNaslov Naslov NaslovNaslov Naslov" + (i + 1));
-            switch (i % 3) {
-                case 0:
-                    item.setType("work");
-                    break;
-                case 1:
-                    item.setType("travel");
-                    break;
-                case 2:
-                    item.setType("relaxation");
-                    break;
-            }
-
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(new Date());
-            calendar.add(Calendar.DATE, i % 14);
-            item.setStarts(calendar.getTime());
-            item.setEnds(calendar.getTime());
-            item.setDesc("Opis Opis Opis Opis Opis Opis Opis Opis Opis");
-            item.setAddress("Adres Adres Adres Adres Adres Adres Adres Adres");
-            ActivityDTO dto = map(item);
-            data.add(dto);
-            activityList.add(item);
-        }
         recyclerView = view.findViewById(R.id.recycler);
         // optimizing
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
         // creating adapter
-        mAdapter = new ActivityListAdapter(data, new ActivityListAdapter.ItemClickHandler() {
+        activitiesViewModel.getSharedData().getValue().sort((a1,a2)-> {
+            return (int)(a1.getStarts().compareTo(a2.getStarts()));
+        });
+        try {
+            Log.d("type", activitiesViewModel.getSharedData().getValue().stream().filter(a -> a.getTitle().equals("new")).collect(Collectors.toList()).get(0).toString());
+        }catch (Exception e){}
+        mAdapter = new ActivityListAdapter(activitiesViewModel.getSharedData().getValue(), new ActivityListAdapter.ItemClickHandler() {
             @Override
             public void handleItemClick(ActivityDTO item) {
-                Log.d("xxxx-xxxx",item.toString());
                 selectedActivityViewModel.setSharedData(item);
                 Navigation.findNavController(view).navigate(R.id.action_navigation_list_to_navigation_details);
             }
-
         }, new ActivityListAdapter.ItemLongClickHandler() {
             @Override
             public void handleItemLongClick(ActivityDTO item) {
-                DeleteActivityDialog dialog=new DeleteActivityDialog(item.getId(), new DeleteActivityInterface() {
+                DeleteActivityDialog dialog = new DeleteActivityDialog(item.getId(), new DeleteActivityInterface() {
                     @Override
                     public void delete(long id) {
-                        data=data.stream().filter(a -> a.getId()!=id).collect(Collectors.toList());
-                        mAdapter.filterData(data,null);
+
                         // obrisati iz baze
+
+                        activitiesViewModel.setSharedData(activitiesViewModel.getSharedData().getValue().stream().filter(a -> a.getId() != id).collect(Collectors.toList()));
+                        mAdapter.changeData(activitiesViewModel.getSharedData().getValue());
                     }
                 });
-                dialog.show(getChildFragmentManager(),"DeleteActivityDialog");
+                dialog.show(getChildFragmentManager(), "DeleteActivityDialog");
             }
 
         });
@@ -160,112 +150,17 @@ public class ListFragment extends Fragment {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-//                mAdapter.filterData(data, query);
                 return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                if (newText == null || newText.equals(""))
-                    mAdapter.filterData(data, null);
+                if (newText != null && !newText.equals(""))
+                    mAdapter.changeData(activitiesViewModel.getSharedData().getValue().stream().filter(a -> a.getTitle().toLowerCase().contains(newText.toLowerCase())).collect(Collectors.toList()));
                 else
-                    mAdapter.filterData(data, newText);
+                    mAdapter.changeData(activitiesViewModel.getSharedData().getValue());
                 return true;
             }
         });
-    }
-    private  ActivityDTO map(Activity item){
-        ActivityDTO dto = new ActivityDTO();
-        String day = "MON";
-        String month = "DEC";
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(item.getStarts());
-        int iDay = calendar.get(Calendar.DAY_OF_WEEK);
-        int iMonth = calendar.get(Calendar.MONTH);
-        switch (iDay) {
-            case 1:
-                day = getContext().getResources().getString(R.string.sun);
-                break;
-            case 2:
-                day = getContext().getResources().getString(R.string.mon);
-                break;
-            case 3:
-                day = getContext().getResources().getString(R.string.tue);
-                break;
-            case 4:
-                day = getContext().getResources().getString(R.string.wed);
-                break;
-            case 5:
-                day = getContext().getResources().getString(R.string.thu);
-                break;
-            case 6:
-                day = getContext().getResources().getString(R.string.fri);
-                break;
-            default:
-                day = getContext().getResources().getString(R.string.sat);
-        }
-        switch (iMonth) {
-            case 0:
-                month = getContext().getResources().getString(R.string.jan);
-                break;
-            case 1:
-                month = getContext().getResources().getString(R.string.feb);
-                break;
-            case 2:
-                month = getContext().getResources().getString(R.string.mar);
-                break;
-            case 3:
-                month = getContext().getResources().getString(R.string.apr);
-                break;
-            case 4:
-                month = getContext().getResources().getString(R.string.may);
-                break;
-            case 5:
-                month = getContext().getResources().getString(R.string.jun);
-                break;
-            case 6:
-                month = getContext().getResources().getString(R.string.jul);
-                break;
-            case 7:
-                month = getContext().getResources().getString(R.string.avg);
-                break;
-            case 8:
-                month = getContext().getResources().getString(R.string.sep);
-                break;
-            case 9:
-                month = getContext().getResources().getString(R.string.oct);
-                break;
-            case 10:
-                month = getContext().getResources().getString(R.string.nov);
-                break;
-            default:
-                month = getContext().getResources().getString(R.string.dec);
-        }
-        dto.setTitle(item.getTitle());
-        dto.setId(item.getId());
-        dto.setAddress(item.getAddress());
-        dto.setDesc(item.getDesc());
-        dto.setX(item.getX());
-        dto.setY(item.getY());
-        dto.setImgs(item.getImgs());
-        if (item.getType().equals(getContext().getResources().getString(R.string.work_val)))
-            dto.setType(getContext().getResources().getString(R.string.work));
-        else if (item.getType().equals(getContext().getResources().getString(R.string.travel_val)))
-            dto.setType(getContext().getResources().getString(R.string.travel));
-        else
-            dto.setType(getContext().getResources().getString(R.string.freetime));
-        dto.setStarts(item.getStarts());
-        dto.setEnds(new Date());
-        dto.setDate(Integer.toString(calendar.get(Calendar.DATE)));
-        dto.setMonth(month);
-        dto.setDay(day);
-        if (dto.getType().equals(getContext().getResources().getString(R.string.work_val)))
-            dto.setIcon(getContext().getDrawable(R.drawable.ic_work));
-        else if (dto.getType().equals(getContext().getResources().getString(R.string.travel_val)))
-            dto.setIcon(getContext().getDrawable(R.drawable.ic_trip));
-        else
-            dto.setIcon(getContext().getDrawable(R.drawable.ic_freetime));
-        dto.getIcon().setColorFilter(getContext().getColor(R.color.primary), PorterDuff.Mode.SRC_IN);
-        return dto;
     }
 }

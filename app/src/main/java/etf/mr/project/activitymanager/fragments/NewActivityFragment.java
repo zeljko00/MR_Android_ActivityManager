@@ -20,6 +20,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -57,11 +58,15 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 import etf.mr.project.activitymanager.MainActivity;
 import etf.mr.project.activitymanager.R;
 import etf.mr.project.activitymanager.adapters.CarouselAdapter;
 import etf.mr.project.activitymanager.model.Activity;
+import etf.mr.project.activitymanager.model.ActivityDTO;
+import etf.mr.project.activitymanager.viewmodel.ActivitiesViewModel;
+import etf.mr.project.activitymanager.viewmodel.SelectedActivityViewModel;
 import etf.mr.project.activitymanager.viewmodel.SharedViewModel;
 
 
@@ -92,6 +97,7 @@ public class NewActivityFragment extends Fragment {
 
     private Geocoder geocoder;
     private SharedViewModel sharedViewModel;
+    private ActivitiesViewModel activitiesViewModel;
     private String mParam1;
     private String mParam2;
     private RecyclerView carousel;
@@ -102,15 +108,6 @@ public class NewActivityFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment NewActivityFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static NewActivityFragment newInstance(String param1, String param2) {
         NewActivityFragment fragment = new NewActivityFragment();
         Bundle args = new Bundle();
@@ -123,13 +120,16 @@ public class NewActivityFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        sharedViewModel = ((MainActivity) requireActivity()).getSharedViewModel();
+
+        sharedViewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
+        activitiesViewModel=new ViewModelProvider(requireActivity()).get(ActivitiesViewModel.class);
+
         geocoder = new Geocoder(this.getContext(), Locale.getDefault());
+
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-
 
     }
 
@@ -149,7 +149,6 @@ public class NewActivityFragment extends Fragment {
         String[] types = getContext().getResources().getStringArray(R.array.types);
         ArrayAdapter<String> adapter = new ArrayAdapter(this.getContext(), android.R.layout.simple_dropdown_item_1line, types);
         spinner.setAdapter(adapter);
-
         spinner.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -174,7 +173,17 @@ public class NewActivityFragment extends Fragment {
             if (!checkInputData())
                 Toast.makeText(getContext(), getContext().getResources().getString(R.string.fill), Toast.LENGTH_SHORT).show();
             activity = collectData();
+            Random gen=new Random();
+
+            //postaviti id dbojen iz baze
+            activity.setId(gen.nextInt());
+
             Log.d("submit", activity.toString());
+            ActivityDTO dto=((MainActivity) getActivity()).map(activity);
+            activitiesViewModel.addActivity(dto);
+
+            //upis u bazu
+
             Navigation.findNavController(v).navigate(R.id.action_navigation_new_activity_to_navigation_list);
         });
 
@@ -186,7 +195,6 @@ public class NewActivityFragment extends Fragment {
         take.setOnClickListener((View v) -> {
             dispatchTakePictureIntent();
         });
-
 
         type.addTextChangedListener(new TextWatcher() {
             @Override
@@ -215,12 +223,13 @@ public class NewActivityFragment extends Fragment {
         tils.add(view.findViewById(R.id.title_input));
         tils.add(view.findViewById(R.id.desc_input));
 
+        //reduce view width based on display width
         DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
         float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
         if (dpWidth > 500) {
             tils.stream().forEach(l -> {
                 ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) l.getLayoutParams();
-                layoutParams.width = 800;
+                layoutParams.width = 500;
                 l.setLayoutParams(layoutParams);
             });
         }
@@ -275,7 +284,13 @@ public class NewActivityFragment extends Fragment {
         Activity activity = new Activity();
         activity.setTitle(title.getText().toString());
         activity.setDesc(desc.getText().toString());
-        activity.setType(type.getText().toString());
+activity.setImgs(imgs);
+        if (type.getText().toString().equals(getResources().getString(R.string.work)))
+            activity.setType(getResources().getString(R.string.work_val));
+        if (type.getText().toString().equals(getResources().getString(R.string.travel)))
+            activity.setType(getResources().getString(R.string.travel_val));
+        else
+            activity.setType(getResources().getString(R.string.freetime_val));
 
         if (sharedViewModel != null && sharedViewModel.getSharedData() != null && sharedViewModel.getSharedData().getValue() != null) {
             activity.setX(sharedViewModel.getSharedData().getValue().getLat());
@@ -309,7 +324,6 @@ public class NewActivityFragment extends Fragment {
         } catch (Exception e) {
             activity.setEnds(new Date());
         }
-//        Log.d("location", sharedViewModel.getSharedData().getValue().getLat() + " " + sharedViewModel.getSharedData().getValue().getLng());
         return activity;
     }
 
@@ -384,28 +398,7 @@ public class NewActivityFragment extends Fragment {
     }
 
     private void showPhoto(ImageView imageView, String path) {
-        // Get the dimensions of the View
-        int targetW = imageView.getWidth();
-        int targetH = imageView.getHeight();
-
-        // Get the dimensions of the bitmap
-        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-        bmOptions.inJustDecodeBounds = true;
-
-        BitmapFactory.decodeFile(path, bmOptions);
-
-        int photoW = bmOptions.outWidth;
-        int photoH = bmOptions.outHeight;
-
-        // Determine how much to scale down the image
-        int scaleFactor = Math.max(1, Math.min(photoW / targetW, photoH / targetH));
-
-        // Decode the image file into a Bitmap sized to fill the View
-        bmOptions.inJustDecodeBounds = false;
-        bmOptions.inSampleSize = scaleFactor;
-        bmOptions.inPurgeable = true;
-
-        Bitmap bitmap = BitmapFactory.decodeFile(path, bmOptions);
+        Bitmap bitmap=BitmapFactory.decodeFile(path);
         imageView.setImageBitmap(bitmap);
     }
 

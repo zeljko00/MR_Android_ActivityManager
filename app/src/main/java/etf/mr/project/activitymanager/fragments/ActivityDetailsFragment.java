@@ -80,6 +80,9 @@ public class ActivityDetailsFragment extends Fragment implements OnMapReadyCallb
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        selectedActivityViewModel = new ViewModelProvider(requireActivity()).get(SelectedActivityViewModel.class);
+
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -92,7 +95,6 @@ public class ActivityDetailsFragment extends Fragment implements OnMapReadyCallb
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_activity_details, container, false);
-        selectedActivityViewModel = new ViewModelProvider(requireActivity()).get(SelectedActivityViewModel.class);
         mapView = view.findViewById(R.id.locationView);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
@@ -119,8 +121,13 @@ public class ActivityDetailsFragment extends Fragment implements OnMapReadyCallb
             starts.setText(dateFormat.format(selectedActivityViewModel.getSharedData().getValue().getStarts()).replace(" ", " " + getContext().getResources().getString(R.string.at) + " "));
             ends.setText(dateFormat.format(selectedActivityViewModel.getSharedData().getValue().getEnds()).replace(" ", " " + getContext().getResources().getString(R.string.at) + " "));
             icon.setImageDrawable(selectedActivityViewModel.getSharedData().getValue().getIcon());
+            Log.d("type",selectedActivityViewModel.getSharedData().getValue().toString());
             if (selectedActivityViewModel.getSharedData().getValue().getType().equals(getContext().getResources().getString(R.string.travel)))
                 mapView.setVisibility(View.VISIBLE);
+            else if (selectedActivityViewModel.getSharedData().getValue().getType().equals(getContext().getResources().getString(R.string.freetime)))
+                carousel.setVisibility(View.VISIBLE);
+            else
+                Log.d("type",selectedActivityViewModel.getSharedData().getValue().toString());
         }
         return view;
     }
@@ -155,8 +162,6 @@ public class ActivityDetailsFragment extends Fragment implements OnMapReadyCallb
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
 
-        // Add a marker at a specific location
-//        LatLng markerPosition = new LatLng(44.766769914889494, 17.18670582069851);
         if (selectedActivityViewModel != null && selectedActivityViewModel.getSharedData() != null && selectedActivityViewModel.getSharedData().getValue() != null) {
             LatLng markerPosition = new LatLng(selectedActivityViewModel.getSharedData().getValue().getX(), selectedActivityViewModel.getSharedData().getValue().getY());
             marker = googleMap.addMarker(new MarkerOptions().position(markerPosition).draggable(true));

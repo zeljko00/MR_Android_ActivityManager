@@ -3,6 +3,7 @@ package etf.mr.project.activitymanager.fragments;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
@@ -21,6 +22,7 @@ import com.google.android.material.button.MaterialButton;
 import etf.mr.project.activitymanager.MainActivity;
 import etf.mr.project.activitymanager.R;
 import etf.mr.project.activitymanager.model.CoordTuple;
+import etf.mr.project.activitymanager.viewmodel.SelectedActivityViewModel;
 import etf.mr.project.activitymanager.viewmodel.SharedViewModel;
 
 public class LocationPickerFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerDragListener {
@@ -32,13 +34,12 @@ public class LocationPickerFragment extends Fragment implements OnMapReadyCallba
 
     private Marker marker;
 
-    private double lat;
-    private double lng;
+    private double lat = 44.766769914889494;
+    private double lng = 17.18670582069851;
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
@@ -59,7 +60,7 @@ public class LocationPickerFragment extends Fragment implements OnMapReadyCallba
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        sharedViewModel = ((MainActivity) requireActivity()).getSharedViewModel();
+        sharedViewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
 
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);

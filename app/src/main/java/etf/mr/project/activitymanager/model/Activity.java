@@ -107,10 +107,11 @@ public class Activity {
                 ", desc='" + desc + '\'' +
                 ", type='" + type + '\'' +
                 ", address='" + address + '\'' +
-                ", x='" + x + '\'' +
-                ", y='" + y + '\'' +
+                ", x=" + x +
+                ", y=" + y +
                 ", starts=" + starts +
                 ", ends=" + ends +
+                ", imgs=" + imgs +
                 '}';
     }
 }

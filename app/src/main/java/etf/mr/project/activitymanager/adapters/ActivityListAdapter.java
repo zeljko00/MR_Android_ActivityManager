@@ -1,5 +1,6 @@
 package etf.mr.project.activitymanager.adapters;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
@@ -52,10 +54,9 @@ public class ActivityListAdapter extends RecyclerView.Adapter<ActivityListAdapte
     private ItemClickHandler itemClickHandler;
     private ItemLongClickHandler itemLongClickHandler;
     public ActivityListAdapter(List<ActivityDTO> data, ItemClickHandler itemClickHandler, ItemLongClickHandler itemLongClickHandler){
-        this.data=data;
+        this.data=new ArrayList<>(data);
         this.itemClickHandler=itemClickHandler;
         this.itemLongClickHandler=itemLongClickHandler;
-        sort();
     }
 
     // binding list item view and its layout
@@ -89,18 +90,9 @@ public class ActivityListAdapter extends RecyclerView.Adapter<ActivityListAdapte
             }
         });
     }
-    public void filterData(List<ActivityDTO> allData,String query) {
-        if(query!=null)
-         data=allData.stream().filter(a -> a.getTitle().toLowerCase().contains(query.toLowerCase())).collect(Collectors.toList());
-        else
-            data=allData;
-        sort();
-        notifyDataSetChanged(); // Notify the adapter of the data change
-    }
-    public void sort(){
-        data.sort((a1,a2)-> {
-            return (int)(a1.getStarts().getTime()-a2.getStarts().getTime());
-        });
+    public void changeData(List<ActivityDTO> newData){
+        data=newData;
+        notifyDataSetChanged();
     }
     @Override
     public int getItemCount(){
