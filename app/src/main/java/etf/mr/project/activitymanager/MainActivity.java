@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
 
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(new Date());
-            calendar.add(Calendar.DATE, i % 14);
+            calendar.add(Calendar.DATE, i % 7);
             item.setStarts(calendar.getTime());
             item.setEnds(calendar.getTime());
             item.setDesc("Opis Opis Opis Opis Opis Opis Opis Opis Opis");
@@ -206,9 +206,9 @@ public class MainActivity extends AppCompatActivity {
         dto.setDate(Integer.toString(calendar.get(Calendar.DATE)));
         dto.setMonth(month);
         dto.setDay(day);
-        if (dto.getType().equals(getResources().getString(R.string.work_val)))
+        if (dto.getType().equals(getResources().getString(R.string.work)))
             dto.setIcon(getDrawable(R.drawable.ic_work));
-        else if (dto.getType().equals(getResources().getString(R.string.travel_val)))
+        else if (dto.getType().equals(getResources().getString(R.string.travel)))
             dto.setIcon(getDrawable(R.drawable.ic_trip));
         else
             dto.setIcon(getDrawable(R.drawable.ic_freetime));

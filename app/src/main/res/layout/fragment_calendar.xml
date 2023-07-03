@@ -7,7 +7,7 @@
     tools:context=".fragments.CalendarFragment"
     style="@style/FragmentStyle">
 
-        <com.prolificinteractive.materialcalendarview.MaterialCalendarView
+        <com.applandeo.materialcalendarview.CalendarView
             android:id="@+id/calendarView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -16,5 +16,16 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintVertical_bias="0.0"
+            app:pagesColor="@color/surface"
+            app:daysLabelsColor="@color/onSurface"
+            app:selectionColor="@color/primary"
+            app:headerColor="@color/primary"
+            app:headerLabelColor="@color/onPrimary"
+            app:abbreviationsBarColor="@color/primary"
+            app:abbreviationsLabelsColor="@color/onPrimary"
+            app:type="one_day_picker"
+            app:eventsEnabled="true"
+
+         />
 </androidx.constraintlayout.widget.ConstraintLayout>
